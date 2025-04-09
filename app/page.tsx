@@ -2,37 +2,15 @@
 
 import type React from 'react';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Users, Lightbulb, TrendingUp, ArrowRight, UserCircle } from 'lucide-react';
-import { CadastroModal } from '@/components/cadastro-modal';
-import { LoginModal } from '@/components/login-modal';
-import { useToast } from '@/components/ui/use-toast';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { CheckCircle, Users, Lightbulb, TrendingUp, Linkedin, Instagram } from 'lucide-react';
+import { Carousel } from '@/components/carousel';
 import { toast } from 'sonner';
 
 export default function LandingPage() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-    toast.success('Bem-vindo de volta ao UP Club.');
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -46,7 +24,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl">
-            <Image src="/logo-up.png" alt="Foto de perfil" width={42} height={42} className="object-cover" />
+            <span className="text-primary">UP</span>
             <span className="hidden sm:inline">- Club de Negócios</span>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -56,6 +34,13 @@ export default function LandingPage() {
               onClick={(e) => scrollToSection(e, 'sobre')}
             >
               Sobre
+            </Link>
+            <Link
+              href="#fundadoras"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              onClick={(e) => scrollToSection(e, 'fundadoras')}
+            >
+              Fundadoras
             </Link>
             <Link
               href="#valores"
@@ -80,79 +65,18 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="gap-2">
-                    <UserCircle className="h-4 w-4" />
-                    Meu Perfil
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Perfil</DropdownMenuItem>
-                  <DropdownMenuItem>Configurações</DropdownMenuItem>
-                  <DropdownMenuItem>Meus Eventos</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>Sair</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <>
-                <LoginModal trigger={<Button variant="outline">Login</Button>} onLoginSuccess={handleLoginSuccess} />
-                <CadastroModal trigger={<Button>Associe-se</Button>} />
-              </>
-            )}
+            <Button variant="outline" onClick={() => toast.info('Abrir link para o login')}>
+              Login
+            </Button>
+            <Button onClick={() => toast.info('Abrir link para cadastro')}>Associe-se</Button>
           </div>
         </div>
       </header>
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted py-20 md:py-32">
-          <div className="container relative z-10 grid gap-8 md:grid-cols-2 md:gap-12 items-center">
-            <div className="space-y-6">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Conectando <span className="text-primary">profissionais</span>, impulsionando{' '}
-                <span className="text-primary">negócios</span>
-              </h1>
-              <p className="text-muted-foreground text-lg md:text-xl max-w-[600px]">
-                Um clube exclusivo que une profissionais de interiores, arquitetos, paisagistas e engenheiros para
-                colaboração e crescimento mútuo.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                {isLoggedIn ? (
-                  <Button size="lg">
-                    Ver eventos
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                ) : (
-                  <CadastroModal
-                    trigger={
-                      <Button size="lg">
-                        Junte-se ao clube
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    }
-                  />
-                )}
-                <Button size="lg" variant="outline">
-                  Saiba mais
-                </Button>
-              </div>
-            </div>
-            <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden">
-              <Image
-                src="/designers.png"
-                alt="Designers"
-                fill
-                quality={100}
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
+        {/* Carousel Section */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-background to-muted">
+          <Carousel />
         </section>
 
         {/* About Section */}
@@ -160,12 +84,10 @@ export default function LandingPage() {
           <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-center">
             <div className="relative h-[400px] w-full rounded-lg overflow-hidden">
               <Image
-                src="/comunidade.jpeg"
-                alt="Somos up"
+                src="/placeholder.svg?height=800&width=1200"
+                alt="Reunião de profissionais"
                 fill
-                quality={100}
                 className="object-cover"
-                priority
               />
             </div>
             <div className="space-y-6">
@@ -178,6 +100,101 @@ export default function LandingPage() {
               <p className="text-muted-foreground text-lg">
                 Nosso propósito é fomentar conexões genuínas que resultem em crescimento profissional e novas
                 oportunidades de negócio para todos os membros.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Fundadoras Section */}
+        <section id="fundadoras" className="py-20 bg-muted/30">
+          <div className="container">
+            <div className="text-center max-w-[800px] mx-auto mb-16 space-y-4">
+              <div className="inline-block rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+                Nossas Fundadoras
+              </div>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Conheça quem está por trás do UP Club</h2>
+              <p className="text-muted-foreground text-lg">
+                Duas arquitetas de interiores que uniram suas experiências e visões para criar uma comunidade única de
+                profissionais.
+              </p>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-2">
+              {/* Meire Ferraz */}
+              <Card className="overflow-hidden flex flex-col h-full">
+                <div className="relative h-[300px] w-full">
+                  <Image
+                    src="/placeholder.svg?height=600&width=800"
+                    alt="Meire Ferraz - Fundadora do UP Club"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6 flex flex-col flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold">Meire Ferraz</h3>
+                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
+                  </div>
+                  <p className="text-muted-foreground flex-1">
+                    Com mais de 15 anos de experiência em projetos residenciais e comerciais, Meire Ferraz traz sua
+                    visão estratégica e paixão por conexões genuínas para o UP Club. Formada pela Universidade de São
+                    Paulo, especializou-se em design de interiores sustentáveis e já liderou mais de 200 projetos em sua
+                    carreira.
+                  </p>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="icon" className="rounded-full">
+                      <Linkedin className="h-4 w-4" />
+                      <span className="sr-only">LinkedIn de Meire Ferraz</span>
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-full">
+                      <Instagram className="h-4 w-4" />
+                      <span className="sr-only">Instagram de Meire Ferraz</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rosangela Ferraz */}
+              <Card className="overflow-hidden flex flex-col h-full">
+                <div className="relative h-[300px] w-full">
+                  <Image
+                    src="/placeholder.svg?height=600&width=800"
+                    alt="Eliza - Fundadora do UP Club"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6 flex flex-col flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold">Rosangela Ferraz</h3>
+                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
+                  </div>
+                  <p className="text-muted-foreground flex-1">
+                    Rosangela Ferraz combina criatividade e visão de negócios em sua abordagem para a arquitetura de
+                    interiores. Formada pela Mackenzie com especialização em design corporativo, ela acumula experiência
+                    em grandes escritórios antes de fundar seu próprio estúdio. Sua paixão por networking e
+                    desenvolvimento profissional foi a semente que deu origem ao UP Club.
+                  </p>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="icon" className="rounded-full">
+                      <Linkedin className="h-4 w-4" />
+                      <span className="sr-only">LinkedIn de Rosangela Ferraz</span>
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-full">
+                      <Instagram className="h-4 w-4" />
+                      <span className="sr-only">Instagram de Rosangela Ferraz</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="mt-12 text-center">
+              <p className="text-lg max-w-[800px] mx-auto">
+                Juntas, Meire Ferraz e Rosangela Ferraz combinam mais de 25 anos de experiência no setor de arquitetura
+                e design de interiores. Elas fundaram o UP Club com a missão de criar um espaço onde profissionais
+                possam crescer juntos, compartilhar conhecimentos e desenvolver parcerias estratégicas que beneficiem a
+                todos.
               </p>
             </div>
           </div>
@@ -404,19 +421,9 @@ export default function LandingPage() {
               Junte-se ao UP - Club de Negócios e faça parte de uma comunidade que valoriza conexão, colaboração e
               crescimento profissional.
             </p>
-            {isLoggedIn ? (
-              <Button size="lg" className="px-8">
-                Ver próximos eventos
-              </Button>
-            ) : (
-              <CadastroModal
-                trigger={
-                  <Button size="lg" className="px-8">
-                    Associe-se agora
-                  </Button>
-                }
-              />
-            )}
+            <Button size="lg" className="px-8">
+              Associe-se agora
+            </Button>
           </div>
         </section>
       </main>
@@ -427,7 +434,9 @@ export default function LandingPage() {
             <div className="font-bold text-xl">
               <span className="text-primary">UP</span> - Club de Negócios
             </div>
-            <p className="text-muted-foreground">Conectando profissionais.</p>
+            <p className="text-muted-foreground">
+              Conectando profissionais, impulsionando negócios no setor criativo e técnico.
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -440,6 +449,15 @@ export default function LandingPage() {
                   onClick={(e) => scrollToSection(e, 'sobre')}
                 >
                   Sobre
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="#fundadoras"
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                  onClick={(e) => scrollToSection(e, 'fundadoras')}
+                >
+                  Fundadoras
                 </Link>
               </li>
               <li>
