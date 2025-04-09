@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -10,16 +10,17 @@ import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface CarouselItem {
-  title: string;
-  description: string;
-  image: string;
-  highlights: string[];
+  title: string
+  description: string
+  image: string
+  highlights: string[]
 }
 
 export function Carousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+  const isMobile = useMediaQuery("(max-width: 768px)")
 
   const carouselItems: CarouselItem[] = [
     {
@@ -51,56 +52,67 @@ export function Carousel() {
     },
   ];
 
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentIndex((prevIndex) => (prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1));
+      setIsTransitioning(true)
+      setCurrentIndex((prevIndex) => (prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1))
     }
-  };
+  }, [isTransitioning, carouselItems.length])
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentIndex((prevIndex) => (prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1));
+      setIsTransitioning(true)
+      setCurrentIndex((prevIndex) => (prevIndex === 0 ? carouselItems.length - 1 : prevIndex - 1))
     }
-  };
+  }, [isTransitioning, carouselItems.length])
 
-  const goToSlide = (index: number) => {
-    if (!isTransitioning && index !== currentIndex) {
-      setIsTransitioning(true);
-      setCurrentIndex(index);
-    }
-  };
+  const goToSlide = useCallback(
+    (index: number) => {
+      if (!isTransitioning && index !== currentIndex) {
+        setIsTransitioning(true)
+        setCurrentIndex(index)
+      }
+    },
+    [isTransitioning, currentIndex],
+  )
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 6000);
+    if (isPaused) return
 
-    return () => clearInterval(interval);
-  }, [currentIndex]);
+    const interval = setInterval(() => {
+      if (!isTransitioning) {
+        setCurrentIndex((prevIndex) => (prevIndex === carouselItems.length - 1 ? 0 : prevIndex + 1))
+        setIsTransitioning(true)
+      }
+    }, 4000)
+
+    return () => clearInterval(interval)
+  }, [isPaused, isTransitioning, carouselItems.length])
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
+      setIsTransitioning(false)
+    }, 500)
 
-    return () => clearTimeout(timer);
-  }, [currentIndex]);
+    return () => clearTimeout(timer)
+  }, [currentIndex])
 
-  const currentItem = carouselItems[currentIndex];
+  const handleMouseEnter = () => setIsPaused(true)
+  const handleMouseLeave = () => setIsPaused(false)
+
+  const currentItem = carouselItems[currentIndex]
 
   const highlightWords = (text: string, wordsToHighlight: string[]) => {
-    if (!wordsToHighlight.length) return <>{text}</>;
+    if (!wordsToHighlight.length) return <>{text}</>
 
-    const regex = new RegExp(`(${wordsToHighlight.join('|')})`, 'gi');
+    const regex = new RegExp(`(${wordsToHighlight.join("|")})`, "gi")
 
-    const parts = text.split(regex);
+    const parts = text.split(regex)
 
     return (
       <>
         {parts.map((part, i) => {
-          const isHighlighted = wordsToHighlight.some((word) => part.toLowerCase() === word.toLowerCase());
+          const isHighlighted = wordsToHighlight.some((word) => part.toLowerCase() === word.toLowerCase())
 
           return isHighlighted ? (
             <span key={i} className="text-primary">
@@ -108,20 +120,24 @@ export function Carousel() {
             </span>
           ) : (
             <React.Fragment key={i}>{part}</React.Fragment>
-          );
+          )
         })}
       </>
-    );
-  };
+    )
+  }
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30 pb-16">
+    <div
+      className="relative overflow-hidden bg-gradient-to-b from-background to-muted/30 pb-16"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Carousel content */}
-      <div className={cn('relative', isMobile ? 'pt-6 pb-12' : 'h-[600px]')}>
+      <div className={cn("relative", isMobile ? "pt-6 pb-12" : "h-[600px]")}>
         <div
           className={cn(
-            'container relative z-10',
-            isMobile ? 'flex flex-col gap-6' : 'grid gap-8 md:grid-cols-2 md:gap-12 items-center h-full py-10'
+            "container relative z-10",
+            isMobile ? "flex flex-col gap-6" : "grid gap-8 md:grid-cols-2 md:gap-12 items-center h-full py-10",
           )}
         >
           <div className="space-y-4 md:space-y-6 max-w-[600px]">
@@ -134,7 +150,7 @@ export function Carousel() {
           </div>
           <div className="relative w-full aspect-[4/3] md:h-[350px] rounded-lg overflow-hidden">
             <Image
-              src={currentItem.image || '/placeholder.svg'}
+              src={currentItem.image || "/placeholder.svg"}
               alt={currentItem.title}
               fill
               className="object-cover transition-transform duration-500 ease-in-out"
@@ -169,27 +185,14 @@ export function Carousel() {
         </Button>
       </div>
 
-      {/* CTA Buttons */}
-      <div className="container pb-12">
-        <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto sm:mx-0">
-          <Button size="lg" className="w-full sm:w-auto">
-            Ver eventos
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-          <Button size="lg" variant="outline" className="w-full sm:w-auto">
-            Saiba mais
-          </Button>
-        </div>
-      </div>
-
       {/* Indicators */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {carouselItems.map((_, index) => (
           <button
             key={index}
             className={cn(
-              'w-2.5 h-2.5 rounded-full transition-all duration-300',
-              index === currentIndex ? 'bg-primary w-8' : 'bg-primary/40 hover:bg-primary/60'
+              "w-2.5 h-2.5 rounded-full transition-all duration-300",
+              index === currentIndex ? "bg-primary w-8" : "bg-primary/40 hover:bg-primary/60",
             )}
             onClick={() => goToSlide(index)}
             aria-label={`Ir para slide ${index + 1}`}
@@ -210,5 +213,5 @@ export function Carousel() {
         </Button>
       </div>
     </div>
-  );
+  )
 }

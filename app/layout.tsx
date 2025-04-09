@@ -7,9 +7,8 @@ import { Providers } from "@/components/providers"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "UP - Club de Negócios",
+  title: "UP Connection",
   description: "Conectando profissionais, impulsionando negócios",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({
