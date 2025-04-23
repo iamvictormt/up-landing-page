@@ -370,40 +370,6 @@ export default function LandingPage() {
             </div>
 
             <div className="grid gap-8 md:grid-cols-2">
-              {/* Meire Ferraz */}
-              <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[300px] w-full">
-                  <Image
-                    src="/placeholder.svg?height=600&width=800"
-                    alt="Meire Ferraz - Fundadora do UP Club"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-6 flex flex-col flex-1">
-                  <div className="mb-4">
-                    <h3 className="text-2xl font-bold">Meire Ferraz</h3>
-                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
-                  </div>
-                  <p className="text-muted-foreground flex-1">
-                    Com mais de 15 anos de experiência em projetos residenciais e comerciais, Meire Ferraz traz sua
-                    visão estratégica e paixão por conexões genuínas para o UP Club. Formada pela Universidade de São
-                    Paulo, especializou-se em design de interiores sustentáveis e já liderou mais de 200 projetos em sua
-                    carreira.
-                  </p>
-                  <div className="flex gap-3 mt-4">
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Linkedin className="h-4 w-4" />
-                      <span className="sr-only">LinkedIn de Meire Ferraz</span>
-                    </Button>
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Instagram className="h-4 w-4" />
-                      <span className="sr-only">Instagram de Meire Ferraz</span>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Rosangela Ferraz */}
               <Card className="overflow-hidden flex flex-col h-full">
                 <div className="relative h-[300px] w-full">
@@ -433,6 +399,40 @@ export default function LandingPage() {
                     <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
                       <Instagram className="h-4 w-4" />
                       <span className="sr-only">Instagram de Rosangela Ferraz</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Meire Ferraz */}
+              <Card className="overflow-hidden flex flex-col h-full">
+                <div className="relative h-[300px] w-full">
+                  <Image
+                    src="/placeholder.svg?height=600&width=800"
+                    alt="Meire Ferraz - Fundadora do UP Club"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6 flex flex-col flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-bold">Meire Ferraz</h3>
+                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
+                  </div>
+                  <p className="text-muted-foreground flex-1">
+                    Com mais de 15 anos de experiência em projetos residenciais e comerciais, Meire Ferraz traz sua
+                    visão estratégica e paixão por conexões genuínas para o UP Club. Formada pela Universidade de São
+                    Paulo, especializou-se em design de interiores sustentáveis e já liderou mais de 200 projetos em sua
+                    carreira.
+                  </p>
+                  <div className="flex gap-3 mt-4">
+                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
+                      <Linkedin className="h-4 w-4" />
+                      <span className="sr-only">LinkedIn de Meire Ferraz</span>
+                    </Button>
+                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
+                      <Instagram className="h-4 w-4" />
+                      <span className="sr-only">Instagram de Meire Ferraz</span>
                     </Button>
                   </div>
                 </CardContent>
