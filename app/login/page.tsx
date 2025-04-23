@@ -27,6 +27,7 @@ import { useRouter } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { toast } from "sonner"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -94,7 +95,7 @@ export default function LoginPage() {
         router.push("/")
       } else {
         // Login falhou
-        setLoginError("Email ou senha incorretos. Tente novamente.")
+        toast.error("Email ou senha incorretos. Tente novamente.")
         setIsLoginLoading(false)
       }
     }, 1000)
