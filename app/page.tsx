@@ -67,7 +67,14 @@ export default function LandingPage() {
           </nav>
           <div className="flex items-center gap-3">
             <Link href="/login" target="_blank" rel="noopener noreferrer">
-              <Button variant="outline" className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+                onClick={() => {
+                  window.open('/login', '_blank');
+                  window.close();
+                }}
+              >
                 Login
               </Button>
             </Link>
@@ -86,11 +93,18 @@ export default function LandingPage() {
           <Carousel />
           <div className="container pb-12 pt-4">
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto sm:mx-0">
-              <Button size="lg" className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+              >
                 Junte-se ao clube
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+              >
                 Saiba mais
               </Button>
             </div>
@@ -545,7 +559,11 @@ export default function LandingPage() {
                 placeholder="Seu e-mail"
                 className="flex h-10 w-full rounded-md border border-input bg-card/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
-              <Button type="submit" variant="outline" className="border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+              <Button
+                type="submit"
+                variant="outline"
+                className="border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+              >
                 Enviar
               </Button>
             </div>
