@@ -6,9 +6,20 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Users, Lightbulb, TrendingUp, ArrowRight, Linkedin, Instagram } from 'lucide-react';
+import {
+  CheckCircle,
+  Users,
+  Lightbulb,
+  TrendingUp,
+  ArrowRight,
+  Linkedin,
+  Instagram,
+  LogIn,
+  PiggyBank,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Carousel } from '@/components/carousel';
+import { PlansModal } from '@/components/plans-modal';
 
 export default function LandingPage() {
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -75,15 +86,18 @@ export default function LandingPage() {
                   window.close();
                 }}
               >
+                <LogIn />
                 Login
               </Button>
             </Link>
-            <Button
-              className="w-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
-              onClick={() => toast.info('Abrir link para cadastro')}
-            >
-              Associe-se
-            </Button>
+            <PlansModal
+              trigger={
+                <Button className="w-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+                  <PiggyBank />
+                  Associe-se
+                </Button>
+              }
+            />
           </div>
         </div>
       </header>
@@ -98,15 +112,20 @@ export default function LandingPage() {
                 className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
               >
                 Junte-se ao clube
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+              <Link
+                href="#fundadoras"
+                className="text-sm font-medium transition-colors hover:text-primary"
+                onClick={(e) => scrollToSection(e, 'sobre')}
               >
-                Saiba mais
-              </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+                >
+                  Saiba mais
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
@@ -117,7 +136,7 @@ export default function LandingPage() {
             <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-center">
               <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl">
                 <Image
-                  src="/placeholder.svg?height=800&width=1200"
+                  src="/equipe-unida-no-trabalho.jpg"
                   alt="Reunião de profissionais"
                   fill
                   className="object-cover"
@@ -472,9 +491,14 @@ export default function LandingPage() {
               Junte-se ao UP - Club de Negócios e faça parte de uma comunidade que valoriza conexão, colaboração e
               crescimento profissional.
             </p>
-            <Button size="lg" className="px-8 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
-              Associe-se agora
-            </Button>
+            <PlansModal
+              trigger={
+                <Button size="lg" className="transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+                  <PiggyBank />
+                  Associe-se
+                </Button>
+              }
+            />
           </div>
         </section>
       </main>

@@ -27,27 +27,27 @@ export function Carousel() {
       title: 'Conectando profissionais, gerando oportunidades',
       description:
         'Um clube exclusivo que une profissionais de interiores, arquitetos, paisagistas para colaboração e crescimento mútuo.',
-      image: '/placeholder.svg?height=800&width=1200',
+      image: '/conectando-profissionais.jpeg',
       highlights: ['Conectando', 'oportunidades'],
     },
     {
       title: 'Eventos presenciais com networking estratégico',
       description:
         'Participe de encontros mensais, workshops e palestras com especialistas do mercado para expandir sua rede de contatos.',
-      image: '/placeholder.svg?height=800&width=1200',
+      image: '/networking-estrategico.jpg',
       highlights: ['eventos', 'networking'],
     },
     {
       title: 'Parcerias inteligentes para promover colaboração',
       description: 'Desenvolva projetos em conjunto com outros profissionais e amplie seu portfólio de serviços.',
-      image: '/placeholder.svg?height=800&width=1200',
+      image: '/parcerias-inteligentes.jpeg',
       highlights: ['parcerias', 'colaboração'],
     },
     {
       title: 'Crescimento e evolução profissional constante',
       description:
         'Acesse conteúdos exclusivos, mentorias e treinamentos para se manter atualizado com as tendências do mercado.',
-      image: '/placeholder.svg?height=800&width=1200',
+      image: '/crescimento.jpeg?height=1920&width=1080',
       highlights: ['Crescimento', 'profissional'],
     },
   ];
@@ -144,7 +144,7 @@ export function Carousel() {
               {currentItem.description}
             </p>
           </div>
-          <div className="relative w-full aspect-[4/3] md:h-[350px] rounded-lg overflow-hidden">
+          <div className="relative w-full aspect-[4/3] md:h-[440px] rounded-lg overflow-hidden">
             <Image
               src={currentItem.image || '/placeholder.svg'}
               alt={currentItem.title}
