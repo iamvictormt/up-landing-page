@@ -14,13 +14,18 @@ import {
   ArrowLeft,
   Mail,
   UserPlus,
-  Check,
   Briefcase,
   LogIn,
-  UserCircle2,
   Building2,
   Phone,
   CreditCard,
+  WholeWord,
+  Pin,
+  IdCard,
+  Fingerprint,
+  Building,
+  Ticket,
+  Tickets,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
@@ -28,6 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { toast } from 'sonner';
+import { applyDocumentMask, applyPhoneMask, applyRgMask } from '@/utils/masks';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,12 +42,10 @@ export default function LoginPage() {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mounted, setMounted] = useState(false);
 
-  // Evitar problemas de hidratação
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Login state
   const [loginData, setLoginData] = useState({
     email: '',
     senha: '',
@@ -49,9 +53,12 @@ export default function LoginPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
 
-  // Professional Register state
   const [professionalData, setProfessionalData] = useState({
     name: '',
+    officeName: '',
+    generalRegister: '',
+    registrationAgency: '',
+    address: '',
     email: '',
     document: '',
     password: '',
@@ -60,7 +67,6 @@ export default function LoginPage() {
     profession: '',
   });
 
-  // Shopkeeper Register state
   const [shopkeeperData, setShopkeeperData] = useState({
     name: '',
     email: '',
@@ -74,7 +80,6 @@ export default function LoginPage() {
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
 
-  // Login handlers
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
@@ -121,7 +126,16 @@ export default function LoginPage() {
   // Professional Register handlers
   const handleProfessionalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setProfessionalData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'phone') {
+      setProfessionalData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
+    } else if (name === 'generalRegister') {
+      setProfessionalData((prev) => ({ ...prev, [name]: applyRgMask(value) }));
+    } else if (name === 'document') {
+      setProfessionalData((prev) => ({ ...prev, [name]: applyDocumentMask(value) }));
+    } else {
+      setProfessionalData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleProfessionalSelectChange = (value: string) => {
@@ -131,7 +145,14 @@ export default function LoginPage() {
   // Shopkeeper Register handlers
   const handleShopkeeperChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setShopkeeperData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'phone') {
+      setShopkeeperData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
+    } else if (name === 'document') {
+      setShopkeeperData((prev) => ({ ...prev, [name]: applyDocumentMask(value) }));
+    } else {
+      setShopkeeperData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleShopkeeperSelectChange = (value: string) => {
@@ -459,7 +480,7 @@ export default function LoginPage() {
                         />
                       </div>
                       <div className="text-center">
-                        <p className="font-medium">Lojista/Fornecedor Parceiro</p>
+                        <p className="font-medium">Fornecedor Parceiro</p>
                         <p className="text-xs text-muted-foreground"></p>
                       </div>
                     </button>
@@ -471,7 +492,7 @@ export default function LoginPage() {
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-sm font-medium">
-                            Nome Completo
+                            Nome completo
                           </Label>
                           <div className="relative">
                             <Input
@@ -488,24 +509,169 @@ export default function LoginPage() {
                             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
-
                         <div className="space-y-2">
-                          <Label htmlFor="document" className="text-sm font-medium">
-                            CPF
+                          <Label htmlFor="office-name" className="text-sm font-medium">
+                            Nome do escritório
                           </Label>
                           <div className="relative">
                             <Input
-                              id="document"
-                              name="document"
+                              id="office-name"
+                              name="officeName"
                               type="text"
-                              value={professionalData.document}
+                              value={professionalData.officeName}
                               onChange={handleProfessionalChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="000.000.000-00"
+                              placeholder="Nome do seu escritório"
                               required
                               disabled={registerSuccess}
                             />
-                            <CreditCard className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Building className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="profession" className="text-sm font-medium">
+                              Profissão
+                            </Label>
+                            <div className="relative">
+                              <Select
+                                value={professionalData.profession}
+                                onValueChange={handleProfessionalSelectChange}
+                                disabled={registerSuccess}
+                              >
+                                <SelectTrigger className="pl-10 bg-card/50 border-border/50 focus:border-primary">
+                                  <SelectValue placeholder="Selecione sua profissão" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Arquiteto(a)">Arquiteto(a)</SelectItem>
+                                  <SelectItem value="Designer de Interiores">Designer de Interiores</SelectItem>
+                                  <SelectItem value="Engenheiro(a)">Engenheiro(a)</SelectItem>
+                                  <SelectItem value="Paisagista">Paisagista</SelectItem>
+                                  <SelectItem value="Outro">Outro</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground z-10" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="document" className="text-sm font-medium">
+                              CPF/CNPJ
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="document"
+                                name="document"
+                                type="text"
+                                value={professionalData.document}
+                                onChange={handleProfessionalChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 14 && e.target.value.length !== 18
+                                    ? setProfessionalData((prev) => ({ ...prev, document: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                disabled={registerSuccess}
+                                placeholder={'CPF ou CNPJ'}
+                              />
+                              <Fingerprint className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="general-register" className="text-sm font-medium">
+                              RG
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="general-register"
+                                name="generalRegister"
+                                type="text"
+                                value={professionalData.generalRegister}
+                                onChange={handleProfessionalChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 12
+                                    ? setProfessionalData((prev) => ({ ...prev, generalRegister: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="00.000.000-0"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <IdCard className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="registration-agency" className="text-sm font-medium">
+                              CREA/CAU/ABD
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="registration-agency"
+                                name="registrationAgency"
+                                type="text"
+                                value={professionalData.registrationAgency}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="CREA/CAU/ABD"
+                                required
+                                maxLength={20}
+                                pattern="[A-Za-z0-9\-\/]+"
+                                disabled={registerSuccess}
+                              />
+                              <Tickets className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="address" className="text-sm font-medium">
+                            Endereço
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="address"
+                              name="address"
+                              type="text"
+                              value={professionalData.address}
+                              onChange={handleProfessionalChange}
+                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                              placeholder="Av. Rio de janeiro, Quadra 3 A, Lote 1"
+                              required
+                              disabled={registerSuccess}
+                            />
+                            <Pin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="text-sm font-medium">
+                            Whatsapp
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              value={professionalData.phone}
+                              onChange={handleProfessionalChange}
+                              onBlur={(e) => {
+                                e.target.value.length !== 15
+                                  ? setProfessionalData((prev) => ({ ...prev, phone: '' }))
+                                  : '';
+                              }}
+                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                              placeholder="(00) 00000-0000"
+                              required
+                              disabled={registerSuccess}
+                            />
+                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
@@ -523,92 +689,52 @@ export default function LoginPage() {
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
                               placeholder="seu@email.com"
                               required
+                              maxLength={55}
                               disabled={registerSuccess}
                             />
                             <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-sm font-medium">
-                            Telefone
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="phone"
-                              name="phone"
-                              type="tel"
-                              value={professionalData.phone}
-                              onChange={handleProfessionalChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="(00) 00000-0000"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="password" className="text-sm font-medium">
+                              Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={professionalData.password}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                maxLength={22}
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
-                        </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="profession" className="text-sm font-medium">
-                            Profissão
-                          </Label>
-                          <div className="relative">
-                            <Select
-                              value={professionalData.profession}
-                              onValueChange={handleProfessionalSelectChange}
-                              disabled={registerSuccess}
-                            >
-                              <SelectTrigger className="pl-10 bg-card/50 border-border/50 focus:border-primary">
-                                <SelectValue placeholder="Selecione sua profissão" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Arquiteto(a)">Arquiteto(a)</SelectItem>
-                                <SelectItem value="Designer de Interiores">Designer de Interiores</SelectItem>
-                                <SelectItem value="Engenheiro(a)">Engenheiro(a)</SelectItem>
-                                <SelectItem value="Paisagista">Paisagista</SelectItem>
-                                <SelectItem value="Outro">Outro</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground z-10" />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="password" className="text-sm font-medium">
-                            Senha
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="password"
-                              name="password"
-                              type="password"
-                              value={professionalData.password}
-                              onChange={handleProfessionalChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                            Confirmar Senha
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="confirmPassword"
-                              name="confirmPassword"
-                              type="password"
-                              value={professionalData.confirmPassword}
-                              onChange={handleProfessionalChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                              Confirmar Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                value={professionalData.confirmPassword}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                maxLength={22}
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>{' '}
                           </div>
                         </div>
                       </div>
