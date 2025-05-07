@@ -6,18 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  CheckCircle,
-  Users,
-  Lightbulb,
-  TrendingUp,
-  ArrowRight,
-  Linkedin,
-  Instagram,
-  LogIn,
-  PiggyBank,
-} from 'lucide-react';
-import { toast } from 'sonner';
+import { CheckCircle, Users, Lightbulb, TrendingUp, Linkedin, Instagram, LogIn, PiggyBank } from 'lucide-react';
 import { Carousel } from '@/components/carousel';
 import { PlansModal } from '@/components/plans-modal';
 
@@ -36,9 +25,11 @@ export default function LandingPage() {
       <header className="sticky top-0 z-40 border-b header-gradient">
         <div className="container flex h-20 items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl">
-            <span className="text-primary">UP</span>
-            <span className="hidden sm:inline text-foreground">Connection</span>
+            <div className="relative w-16 h-16">
+              <Image src="/logo-up-completa.svg" alt="UP Club Logo" fill className="object-contain" priority />
+            </div>
           </div>
+
           <nav className="hidden md:flex gap-6">
             <Link
               href="#sobre"

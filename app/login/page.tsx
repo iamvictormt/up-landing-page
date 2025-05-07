@@ -18,14 +18,12 @@ import {
   LogIn,
   Building2,
   Phone,
-  CreditCard,
-  WholeWord,
   Pin,
   IdCard,
   Fingerprint,
   Building,
-  Ticket,
   Tickets,
+  PhoneCall,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
@@ -33,12 +31,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { toast } from 'sonner';
-import { applyDocumentMask, applyPhoneMask, applyRgMask } from '@/utils/masks';
+import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyRgMask } from '@/utils/masks';
+import Image from 'next/image';
+import { PartnerSupplierData, ProfessionalData, RegisterDTO } from '../types';
 
 export default function LoginPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('login');
-  const [registerType, setRegisterType] = useState<'professional' | 'shopkeeper'>('professional');
+  const [registerType, setRegisterType] = useState<'professional' | 'partnerSupplier'>('professional');
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mounted, setMounted] = useState(false);
 
@@ -56,25 +56,27 @@ export default function LoginPage() {
   const [professionalData, setProfessionalData] = useState({
     name: '',
     officeName: '',
+    profession: '',
+    document: '',
     generalRegister: '',
     registrationAgency: '',
     address: '',
+    phone: '',
     email: '',
-    document: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    profession: '',
   });
 
-  const [shopkeeperData, setShopkeeperData] = useState({
-    name: '',
-    email: '',
+  const [partnerSupplierData, setPartnerSupplierData] = useState({
+    tradeName: '',
+    companyName: '',
     document: '',
+    stateRegistration: '',
+    address: '',
+    contact: '',
+    email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    segment: '',
   });
 
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
@@ -142,55 +144,61 @@ export default function LoginPage() {
     setProfessionalData((prev) => ({ ...prev, profession: value }));
   };
 
-  // Shopkeeper Register handlers
-  const handleShopkeeperChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Partner Supplier Register handlers
+  const handlePartnerSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'phone') {
-      setShopkeeperData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
+    if (name === 'contact') {
+      setPartnerSupplierData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
     } else if (name === 'document') {
-      setShopkeeperData((prev) => ({ ...prev, [name]: applyDocumentMask(value) }));
+      setPartnerSupplierData((prev) => ({ ...prev, [name]: applyDocumentCnpjMask(value) }));
     } else {
-      setShopkeeperData((prev) => ({ ...prev, [name]: value }));
+      setPartnerSupplierData((prev) => ({ ...prev, [name]: value }));
     }
-  };
-
-  const handleShopkeeperSelectChange = (value: string) => {
-    setShopkeeperData((prev) => ({ ...prev, segment: value }));
   };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsRegisterLoading(true);
 
-    const data = registerType === 'professional' ? professionalData : shopkeeperData;
+    const isProfessional = registerType === 'professional';
+    const data = isProfessional ? professionalData : partnerSupplierData;
+    const url = `http://localhost:8080/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
+
     if (data.password !== data.confirmPassword) {
       toast.error('As senhas não coincidem.');
       setIsRegisterLoading(false);
       return;
     }
 
-    const isProfessional = registerType === 'professional';
-    const url = `http://localhost:8080/api/${isProfessional ? 'professional' : 'shopkeeper'}`;
-
-    // Preparar o payload conforme o tipo de registro
-    const payload: any = {
-      user: { email: data.email, password: data.password },
+    const payload: RegisterDTO = {
+      user: {
+        email: data.email,
+        password: data.password,
+      },
     };
 
     if (isProfessional) {
+      const prof = data as ProfessionalData;
       payload.professional = {
-        name: data.name,
-        document: data.document,
-        phone: data.phone,
-        profession: data.profession, // Usando 'profession' para 'merchant'
+        name: prof.name,
+        officeName: prof.officeName,
+        profession: prof.profession,
+        document: prof.document,
+        generalRegister: prof.generalRegister,
+        registrationAgency: prof.registrationAgency,
+        address: prof.address,
+        phone: prof.phone,
       };
     } else {
-      payload.shopkeeper = {
-        name: data.name,
-        document: data.document,
-        phone: data.phone,
-        segment: data.segment, // Usando 'segment' para 'shopkeeper'
+      const partner = data as PartnerSupplierData;
+      payload.partnerSupplier = {
+        tradeName: partner.tradeName,
+        companyName: partner.companyName,
+        document: partner.document,
+        stateRegistration: partner.stateRegistration,
+        address: partner.address,
+        contact: partner.contact,
       };
     }
 
@@ -236,8 +244,9 @@ export default function LoginPage() {
             <span>Voltar para o site</span>
           </Link>
           <div className="flex items-center gap-2 font-bold text-xl">
-            <span className="text-primary">UP</span>
-            <span className="text-foreground">Connection</span>
+            <div className="relative w-16 h-16">
+              <Image src="/logo-up-completa.svg" alt="UP Club Logo" fill className="object-contain" priority />
+            </div>
           </div>
         </div>
       </header>
@@ -253,12 +262,28 @@ export default function LoginPage() {
           {/* Sidebar with tabs */}
           <div
             className={cn(
-              'bg-gradient-to-b from-primary/20 to-secondary/20 backdrop-blur-sm',
+              'bg-gradient-to-b from-primary/20 to-secondary/20 backdrop-blur-sm content-center',
               isMobile ? 'w-full p-4' : 'w-1/3 p-8'
             )}
           >
-            <h2 className={cn('text-2xl font-bold mb-6 text-center mt-24', isMobile ? 'hidden' : 'block')}>
-              Bem-vindo ao UP Connection
+            <div className="flex justify-center">
+              <div className="relative w-28 h-28">
+                <Image
+                  src="/logo.png?height=200&width=200"
+                  alt="UP Club Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </div>
+            <h2 className={cn('text-2xl font-bold mb-6 text-center mt-2', isMobile ? 'hidden' : 'block')}>
+              Bem-vindo ao{' '}
+              <span className="text-primary">
+                <br />
+                UP{' '}
+              </span>
+              <span className="text-foreground">Connection</span>
             </h2>
 
             <div className={cn('space-y-4', isMobile ? 'flex space-y-0 gap-4' : 'block')}>
@@ -368,7 +393,7 @@ export default function LoginPage() {
                             value={loginData.email}
                             onChange={handleLoginChange}
                             className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                            placeholder="seu@email.com"
+                            placeholder="seu@email.com.br"
                             required
                           />
                           <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -458,10 +483,10 @@ export default function LoginPage() {
 
                     <button
                       type="button"
-                      onClick={() => setRegisterType('shopkeeper')}
+                      onClick={() => setRegisterType('partnerSupplier')}
                       className={cn(
                         'flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border transition-all duration-300',
-                        registerType === 'shopkeeper'
+                        registerType === 'partnerSupplier'
                           ? 'bg-primary/20 border-primary shadow-md'
                           : 'bg-card/30 border-border/50 hover:bg-card/50'
                       )}
@@ -469,13 +494,13 @@ export default function LoginPage() {
                       <div
                         className={cn(
                           'flex items-center justify-center h-12 w-12 rounded-full',
-                          registerType === 'shopkeeper' ? 'bg-primary/30' : 'bg-primary/10'
+                          registerType === 'partnerSupplier' ? 'bg-primary/30' : 'bg-primary/10'
                         )}
                       >
                         <Building2
                           className={cn(
                             'h-6 w-6',
-                            registerType === 'shopkeeper' ? 'text-primary-foreground' : 'text-primary'
+                            registerType === 'partnerSupplier' ? 'text-primary-foreground' : 'text-primary'
                           )}
                         />
                       </div>
@@ -502,7 +527,7 @@ export default function LoginPage() {
                               value={professionalData.name}
                               onChange={handleProfessionalChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Seu nome completo"
+                              placeholder="Ex: Ana Maria da Silva"
                               required
                               disabled={registerSuccess}
                             />
@@ -521,7 +546,7 @@ export default function LoginPage() {
                               value={professionalData.officeName}
                               onChange={handleProfessionalChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Nome do seu escritório"
+                              placeholder="Ex: Lume Arquitetura"
                               required
                               disabled={registerSuccess}
                             />
@@ -539,6 +564,7 @@ export default function LoginPage() {
                                 value={professionalData.profession}
                                 onValueChange={handleProfessionalSelectChange}
                                 disabled={registerSuccess}
+                                required
                               >
                                 <SelectTrigger className="pl-10 bg-card/50 border-border/50 focus:border-primary">
                                   <SelectValue placeholder="Selecione sua profissão" />
@@ -574,7 +600,7 @@ export default function LoginPage() {
                                 className="pl-10 bg-card/50 border-border/50 focus:border-primary"
                                 required
                                 disabled={registerSuccess}
-                                placeholder={'CPF ou CNPJ'}
+                                placeholder="Ex: 000.000.000-00"
                               />
                               <Fingerprint className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             </div>
@@ -599,7 +625,7 @@ export default function LoginPage() {
                                     : '';
                                 }}
                                 className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                                placeholder="00.000.000-0"
+                                placeholder="Ex: 00.000.000-0"
                                 required
                                 disabled={registerSuccess}
                               />
@@ -619,10 +645,9 @@ export default function LoginPage() {
                                 value={professionalData.registrationAgency}
                                 onChange={handleProfessionalChange}
                                 className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                                placeholder="CREA/CAU/ABD"
+                                placeholder="Ex: 1234567890-0/SP"
                                 required
                                 maxLength={20}
-                                pattern="[A-Za-z0-9\-\/]+"
                                 disabled={registerSuccess}
                               />
                               <Tickets className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -642,7 +667,7 @@ export default function LoginPage() {
                               value={professionalData.address}
                               onChange={handleProfessionalChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Av. Rio de janeiro, Quadra 3 A, Lote 1"
+                              placeholder="Ex: Av. Rio de janeiro, Quadra 3"
                               required
                               disabled={registerSuccess}
                             />
@@ -667,7 +692,7 @@ export default function LoginPage() {
                                   : '';
                               }}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="(00) 00000-0000"
+                              placeholder="Ex: (00) 00000-0000"
                               required
                               disabled={registerSuccess}
                             />
@@ -687,7 +712,7 @@ export default function LoginPage() {
                               value={professionalData.email}
                               onChange={handleProfessionalChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="seu@email.com"
+                              placeholder="Ex: contato@teste.com.br"
                               required
                               maxLength={55}
                               disabled={registerSuccess}
@@ -749,23 +774,23 @@ export default function LoginPage() {
                     </form>
                   )}
 
-                  {/* Shopkeeper Registration Form */}
-                  {registerType === 'shopkeeper' && (
+                  {/* Partner Supplier Registration Form */}
+                  {registerType === 'partnerSupplier' && (
                     <form onSubmit={handleRegisterSubmit} className="space-y-6">
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="name" className="text-sm font-medium">
-                            Nome Fantasia
+                          <Label htmlFor="trade-name" className="text-sm font-medium">
+                            Nome fantasia
                           </Label>
                           <div className="relative">
                             <Input
-                              id="name"
-                              name="name"
+                              id="trade-name"
+                              name="tradeName"
                               type="text"
-                              value={shopkeeperData.name}
-                              onChange={handleShopkeeperChange}
+                              value={partnerSupplierData.tradeName}
+                              onChange={handlePartnerSupplierChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Nome"
+                              placeholder="Ex: Padaria Doce Sabor"
                               required
                               disabled={registerSuccess}
                             />
@@ -774,64 +799,85 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="document" className="text-sm font-medium">
-                            CNPJ
+                          <Label htmlFor="company-name" className="text-sm font-medium">
+                            Razão social
                           </Label>
                           <div className="relative">
                             <Input
-                              id="document"
-                              name="document"
+                              id="company-name"
+                              name="companyName"
                               type="text"
-                              value={shopkeeperData.document}
-                              onChange={handleShopkeeperChange}
+                              value={partnerSupplierData.companyName}
+                              onChange={handlePartnerSupplierChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="00.000.000/0000-00"
+                              placeholder="Ex: Padaria e Confeitaria São João LTDA"
                               required
                               disabled={registerSuccess}
                             />
-                            <CreditCard className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Building2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="document" className="text-sm font-medium">
+                              CNPJ
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="document"
+                                name="document"
+                                type="text"
+                                value={partnerSupplierData.document}
+                                onChange={handlePartnerSupplierChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 18
+                                    ? setPartnerSupplierData((prev) => ({ ...prev, document: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 00.000.000/0000-00"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Fingerprint className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="state-registration" className="text-sm font-medium">
+                              Inscrição estadual
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="state-registration"
+                                name="stateRegistration"
+                                type="text"
+                                value={partnerSupplierData.stateRegistration}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 110.042.490.114"
+                                required
+                                maxLength={16}
+                                disabled={registerSuccess}
+                              />
+                              <Tickets className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="segmento" className="text-sm font-medium">
-                            Segmento
-                          </Label>
-                          <div className="relative">
-                            <Select
-                              value={shopkeeperData.segment}
-                              onValueChange={handleShopkeeperSelectChange}
-                              disabled={registerSuccess}
-                            >
-                              <SelectTrigger className="pl-10 bg-card/50 border-border/50 focus:border-primary">
-                                <SelectValue placeholder="Selecione o segmento" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Escritório de Arquitetura">Escritório de Arquitetura</SelectItem>
-                                <SelectItem value="Design de Interiores">Design de Interiores</SelectItem>
-                                <SelectItem value="Construção Civil">Construção Civil</SelectItem>
-                                <SelectItem value="Móveis e Decoração">Móveis e Decoração</SelectItem>
-                                <SelectItem value="Paisagismo">Paisagismo</SelectItem>
-                                <SelectItem value="Outro">Outro</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <Briefcase className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground z-10" />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="shopkeeper-email" className="text-sm font-medium">
-                            Email
+                          <Label htmlFor="partner-supplier-address" className="text-sm font-medium">
+                            Endereço
                           </Label>
                           <div className="relative">
                             <Input
-                              id="shopkeeper-email"
-                              name="email"
-                              type="email"
-                              value={shopkeeperData.email}
-                              onChange={handleShopkeeperChange}
+                              id="partner-supplier-address"
+                              name="address"
+                              type="text"
+                              value={partnerSupplierData.address}
+                              onChange={handlePartnerSupplierChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="contato@teste.com.br"
+                              placeholder="Ex: Av. Rio de janeiro, Quadra 3"
                               required
                               disabled={registerSuccess}
                             />
@@ -840,60 +886,87 @@ export default function LoginPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-sm font-medium">
-                            Telefone
+                          <Label htmlFor="contact" className="text-sm font-medium">
+                            Contato
                           </Label>
                           <div className="relative">
                             <Input
-                              id="phone"
-                              name="phone"
+                              id="contact"
+                              name="contact"
                               type="tel"
-                              value={shopkeeperData.phone}
-                              onChange={handleShopkeeperChange}
+                              value={partnerSupplierData.contact}
+                              onChange={handlePartnerSupplierChange}
+                              onBlur={(e) => {
+                                e.target.value.length !== 15
+                                  ? setPartnerSupplierData((prev) => ({ ...prev, contact: '' }))
+                                  : '';
+                              }}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="(00) 00000-0000"
+                              placeholder="Ex: (00) 00000-0000"
                               required
                               disabled={registerSuccess}
                             />
-                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <PhoneCall className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="password" className="text-sm font-medium">
-                            Senha
+                          <Label htmlFor="partner-supplier-email" className="text-sm font-medium">
+                            Email
                           </Label>
                           <div className="relative">
                             <Input
-                              id="password"
-                              name="password"
-                              type="password"
-                              value={shopkeeperData.password}
-                              onChange={handleShopkeeperChange}
+                              id="partner-supplier-email"
+                              name="email"
+                              type="email"
+                              value={partnerSupplierData.email}
+                              onChange={handlePartnerSupplierChange}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                              placeholder="Ex: contato@teste.com.br"
                               required
                               disabled={registerSuccess}
                             />
-                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                            Confirmar Senha
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="confirmPassword"
-                              name="confirmPassword"
-                              type="password"
-                              value={shopkeeperData.confirmPassword}
-                              onChange={handleShopkeeperChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="password" className="text-sm font-medium">
+                              Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={partnerSupplierData.password}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                              Confirmar Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                value={partnerSupplierData.confirmPassword}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
                       </div>
