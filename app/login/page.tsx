@@ -94,7 +94,7 @@ export default function LoginPage() {
     setLoginError(null);
 
     try {
-      const response = await fetch('https://e04129a4-9486-48a9-a2c8-5be7400193ce-00-2doiy1qlqro88.worf.replit.dev/api/auth/login', {
+      const response = await fetch('https://up-backend-production.up.railway.app/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export default function LoginPage() {
 
     const isProfessional = registerType === 'professional';
     const data = isProfessional ? professionalData : partnerSupplierData;
-    const url = `https://e04129a4-9486-48a9-a2c8-5be7400193ce-00-2doiy1qlqro88.worf.replit.dev/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
+    const url = `https://up-backend-production.up.railway.app/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
 
     if (data.password !== data.confirmPassword) {
       toast.error('As senhas não coincidem.');
