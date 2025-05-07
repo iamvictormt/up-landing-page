@@ -94,7 +94,7 @@ export default function LoginPage() {
     setLoginError(null);
 
     try {
-      const response = await fetch('https://1b5d18bb-1e08-45d0-951f-b4b56bfbb21d-00-12roaffq8bd2j.riker.replit.dev:8000/api/auth/login', {
+      const response = await fetch('https://e04129a4-9486-48a9-a2c8-5be7400193ce-00-2doiy1qlqro88.worf.replit.dev/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export default function LoginPage() {
 
     const isProfessional = registerType === 'professional';
     const data = isProfessional ? professionalData : partnerSupplierData;
-    const url = `https://1b5d18bb-1e08-45d0-951f-b4b56bfbb21d-00-12roaffq8bd2j.riker.replit.dev:8000/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
+    const url = `https://e04129a4-9486-48a9-a2c8-5be7400193ce-00-2doiy1qlqro88.worf.replit.dev/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
 
     if (data.password !== data.confirmPassword) {
       toast.error('As senhas não coincidem.');
