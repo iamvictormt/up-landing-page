@@ -24,6 +24,12 @@ import {
   Building,
   Tickets,
   PhoneCall,
+  MapPinHouse,
+  Map,
+  MapPinned,
+  Milestone,
+  Warehouse,
+  Compass,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
@@ -31,7 +37,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { toast } from 'sonner';
-import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyRgMask } from '@/utils/masks';
+import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyRgMask, applyZipCodeMask } from '@/utils/masks';
 import Image from 'next/image';
 import { PartnerSupplierData, ProfessionalData, RegisterDTO } from '../types';
 
@@ -60,11 +66,19 @@ export default function LoginPage() {
     document: '',
     generalRegister: '',
     registrationAgency: '',
-    address: '',
     phone: '',
     email: '',
     password: '',
     confirmPassword: '',
+    address: {
+      state: '',
+      city: '',
+      district: '',
+      street: '',
+      complement: '',
+      number: '',
+      zipCode: '',
+    },
   });
 
   const [partnerSupplierData, setPartnerSupplierData] = useState({
@@ -72,11 +86,19 @@ export default function LoginPage() {
     companyName: '',
     document: '',
     stateRegistration: '',
-    address: '',
     contact: '',
     email: '',
     password: '',
     confirmPassword: '',
+    address: {
+      state: '',
+      city: '',
+      district: '',
+      street: '',
+      complement: '',
+      number: '',
+      zipCode: '',
+    },
   });
 
   const [isRegisterLoading, setIsRegisterLoading] = useState(false);
@@ -129,10 +151,17 @@ export default function LoginPage() {
   const handleProfessionalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'phone') {
+    if (name.startsWith('address.')) {
+      const addressField = name.split('.')[1];
+      setProfessionalData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value,
+        },
+      }));
+    } else if (name === 'phone') {
       setProfessionalData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
-    } else if (name === 'generalRegister') {
-      setProfessionalData((prev) => ({ ...prev, [name]: applyRgMask(value) }));
     } else if (name === 'document') {
       setProfessionalData((prev) => ({ ...prev, [name]: applyDocumentMask(value) }));
     } else {
@@ -148,7 +177,16 @@ export default function LoginPage() {
   const handlePartnerSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'contact') {
+    if (name.startsWith('address.')) {
+      const addressField = name.split('.')[1];
+      setPartnerSupplierData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value,
+        },
+      }));
+    } else if (name === 'contact') {
       setPartnerSupplierData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
     } else if (name === 'document') {
       setPartnerSupplierData((prev) => ({ ...prev, [name]: applyDocumentCnpjMask(value) }));
@@ -187,8 +225,16 @@ export default function LoginPage() {
         document: prof.document,
         generalRegister: prof.generalRegister,
         registrationAgency: prof.registrationAgency,
-        address: prof.address,
         phone: prof.phone,
+        address: {
+          city: prof.address.city,
+          complement: prof.address.complement,
+          district: prof.address.district,
+          number: prof.address.number,
+          state: prof.address.state,
+          street: prof.address.street,
+          zipCode: prof.address.zipCode,
+        },
       };
     } else {
       const partner = data as PartnerSupplierData;
@@ -197,8 +243,16 @@ export default function LoginPage() {
         companyName: partner.companyName,
         document: partner.document,
         stateRegistration: partner.stateRegistration,
-        address: partner.address,
         contact: partner.contact,
+        address: {
+          city: partner.address.city,
+          complement: partner.address.complement,
+          district: partner.address.district,
+          number: partner.address.number,
+          state: partner.address.state,
+          street: partner.address.street,
+          zipCode: partner.address.zipCode,
+        },
       };
     }
 
@@ -223,6 +277,62 @@ export default function LoginPage() {
       setIsRegisterLoading(false);
     }
   };
+
+  const handleZipCodeChange = async (zipCode: string, updateAddressCallback: (data: any) => void) => {
+    zipCode = zipCode.replace(/\D/g, '');
+    if (zipCode.length === 8) {
+      const address = await fetchAddressByZipCode(zipCode);
+      if (address) {
+        updateAddressCallback(address);
+      }
+    }
+  };
+
+  const fetchAddressByZipCode = async (zipCode: string) => {
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${zipCode}/json/`);
+      const data = await res.json();
+      if (data.erro) return null;
+
+      return {
+        street: data.logradouro,
+        district: data.bairro,
+        city: data.localidade,
+        state: data.uf,
+      };
+    } catch (err) {
+      console.error('Erro ao buscar endereço:', err);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const zip = professionalData.address.zipCode;
+    handleZipCodeChange(zip, (address) => {
+      setProfessionalData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          ...address,
+          zipCode: zip,
+        },
+      }));
+    });
+  }, [professionalData.address.zipCode]);
+
+  useEffect(() => {
+    const zip = partnerSupplierData.address.zipCode;
+    handleZipCodeChange(zip, (address) => {
+      setPartnerSupplierData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          ...address,
+          zipCode: zip,
+        },
+      }));
+    });
+  }, [partnerSupplierData.address.zipCode]);
 
   if (!mounted) {
     return null;
@@ -619,14 +729,10 @@ export default function LoginPage() {
                                 type="text"
                                 value={professionalData.generalRegister}
                                 onChange={handleProfessionalChange}
-                                onBlur={(e) => {
-                                  e.target.value.length !== 12
-                                    ? setProfessionalData((prev) => ({ ...prev, generalRegister: '' }))
-                                    : '';
-                                }}
                                 className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                                placeholder="Ex: 00.000.000-0"
+                                placeholder="Ex: 000000000"
                                 required
+                                maxLength={10}
                                 disabled={registerSuccess}
                               />
                               <IdCard className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -654,70 +760,211 @@ export default function LoginPage() {
                             </div>
                           </div>
                         </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-sm font-medium">
+                              Whatsapp
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                value={professionalData.phone}
+                                onChange={handleProfessionalChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 15
+                                    ? setProfessionalData((prev) => ({ ...prev, phone: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: (00) 00000-0000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="address" className="text-sm font-medium">
-                            Endereço
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="address"
-                              name="address"
-                              type="text"
-                              value={professionalData.address}
-                              onChange={handleProfessionalChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: Av. Rio de janeiro, Quadra 3"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Pin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <div className="space-y-2">
+                            <Label htmlFor="professional-email" className="text-sm font-medium">
+                              Email
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="professional-email"
+                                name="email"
+                                type="email"
+                                value={professionalData.email}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: contato@teste.com.br"
+                                required
+                                maxLength={55}
+                                disabled={registerSuccess}
+                              />
+                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.zipCode" className="text-sm font-medium">
+                              CEP
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.zipCode"
+                                name="address.zipCode"
+                                type="text"
+                                value={professionalData.address.zipCode}
+                                onChange={(e) => {
+                                  const masked = applyZipCodeMask(e.target.value);
+                                  setProfessionalData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      zipCode: masked,
+                                    },
+                                  }));
+                                }}
+                                maxLength={9}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 00000-000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Pin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.state" className="text-sm font-medium">
+                              Estado
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.state"
+                                name="address.state"
+                                value={professionalData.address.state}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <MapPinHouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.city" className="text-sm font-medium">
+                              Cidade
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.city"
+                                name="address.city"
+                                value={professionalData.address.city}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <Map className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.district" className="text-sm font-medium">
+                              Bairro
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.district"
+                                name="address.district"
+                                value={professionalData.address.district}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bela Vista"
+                                required
+                                maxLength={2}
+                                disabled={registerSuccess}
+                              />
+                              <MapPinned className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-sm font-medium">
-                            Whatsapp
+                          <Label htmlFor="address.street" className="text-sm font-medium">
+                            Rua
                           </Label>
                           <div className="relative">
                             <Input
-                              id="phone"
-                              name="phone"
-                              type="tel"
-                              value={professionalData.phone}
+                              id="address.street"
+                              name="address.street"
+                              value={professionalData.address.street}
                               onChange={handleProfessionalChange}
-                              onBlur={(e) => {
-                                e.target.value.length !== 15
-                                  ? setProfessionalData((prev) => ({ ...prev, phone: '' }))
-                                  : '';
-                              }}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: (00) 00000-0000"
+                              placeholder="Ex: Bela Vista"
                               required
+                              maxLength={60}
                               disabled={registerSuccess}
                             />
-                            <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Milestone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="professional-email" className="text-sm font-medium">
-                            Email
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="professional-email"
-                              name="email"
-                              type="email"
-                              value={professionalData.email}
-                              onChange={handleProfessionalChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: contato@teste.com.br"
-                              required
-                              maxLength={55}
-                              disabled={registerSuccess}
-                            />
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.number" className="text-sm font-medium">
+                              Número
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.number"
+                                name="address.number"
+                                value={professionalData.address.number}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, '');
+                                  setProfessionalData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      number: value,
+                                    },
+                                  }));
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 30"
+                                required
+                                maxLength={6}
+                                disabled={registerSuccess}
+                              />
+                              <Warehouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.complement" className="text-sm font-medium">
+                              Complemento
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.complement"
+                                name="address.complement"
+                                value={professionalData.address.complement}
+                                onChange={handleProfessionalChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bloco B, Apto 12"
+                                maxLength={60}
+                                disabled={registerSuccess}
+                              />
+                              <Compass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
 
@@ -865,68 +1112,210 @@ export default function LoginPage() {
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="partner-supplier-address" className="text-sm font-medium">
-                            Endereço
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="partner-supplier-address"
-                              name="address"
-                              type="text"
-                              value={partnerSupplierData.address}
-                              onChange={handlePartnerSupplierChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: Av. Rio de janeiro, Quadra 3"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="contact" className="text-sm font-medium">
+                              Contato
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="contact"
+                                name="contact"
+                                type="tel"
+                                value={partnerSupplierData.contact}
+                                onChange={handlePartnerSupplierChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 15
+                                    ? setPartnerSupplierData((prev) => ({ ...prev, contact: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: (00) 00000-0000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <PhoneCall className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="partner-supplier-email" className="text-sm font-medium">
+                              Email
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="partner-supplier-email"
+                                name="email"
+                                type="email"
+                                value={partnerSupplierData.email}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: contato@teste.com.br"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.zipCode" className="text-sm font-medium">
+                              CEP
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.zipCode"
+                                name="address.zipCode"
+                                type="text"
+                                value={partnerSupplierData.address.zipCode}
+                                onChange={(e) => {
+                                  const masked = applyZipCodeMask(e.target.value);
+                                  setPartnerSupplierData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      zipCode: masked,
+                                    },
+                                  }));
+                                }}
+                                maxLength={9}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 00000-000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Pin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.state" className="text-sm font-medium">
+                              Estado
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.state"
+                                name="address.state"
+                                value={partnerSupplierData.address.state}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <MapPinHouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.city" className="text-sm font-medium">
+                              Cidade
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.city"
+                                name="address.city"
+                                value={partnerSupplierData.address.city}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <Map className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.district" className="text-sm font-medium">
+                              Bairro
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.district"
+                                name="address.district"
+                                value={partnerSupplierData.address.district}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bela Vista"
+                                required
+                                maxLength={2}
+                                disabled={registerSuccess}
+                              />
+                              <MapPinned className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="contact" className="text-sm font-medium">
-                            Contato
+                          <Label htmlFor="address.street" className="text-sm font-medium">
+                            Rua
                           </Label>
                           <div className="relative">
                             <Input
-                              id="contact"
-                              name="contact"
-                              type="tel"
-                              value={partnerSupplierData.contact}
+                              id="address.street"
+                              name="address.street"
+                              value={partnerSupplierData.address.street}
                               onChange={handlePartnerSupplierChange}
-                              onBlur={(e) => {
-                                e.target.value.length !== 15
-                                  ? setPartnerSupplierData((prev) => ({ ...prev, contact: '' }))
-                                  : '';
-                              }}
                               className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: (00) 00000-0000"
+                              placeholder="Ex: Bela Vista"
                               required
+                              maxLength={60}
                               disabled={registerSuccess}
                             />
-                            <PhoneCall className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Milestone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <Label htmlFor="partner-supplier-email" className="text-sm font-medium">
-                            Email
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="partner-supplier-email"
-                              name="email"
-                              type="email"
-                              value={partnerSupplierData.email}
-                              onChange={handlePartnerSupplierChange}
-                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
-                              placeholder="Ex: contato@teste.com.br"
-                              required
-                              disabled={registerSuccess}
-                            />
-                            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.number" className="text-sm font-medium">
+                              Número
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.number"
+                                name="address.number"
+                                value={partnerSupplierData.address.number}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, '');
+                                  setPartnerSupplierData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      number: value,
+                                    },
+                                  }));
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 30"
+                                required
+                                maxLength={6}
+                                disabled={registerSuccess}
+                              />
+                              <Warehouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.complement" className="text-sm font-medium">
+                              Complemento
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.complement"
+                                name="address.complement"
+                                value={partnerSupplierData.address.complement}
+                                onChange={handlePartnerSupplierChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bloco B, Apto 12"
+                                maxLength={60}
+                                disabled={registerSuccess}
+                              />
+                              <Compass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
                           </div>
                         </div>
 

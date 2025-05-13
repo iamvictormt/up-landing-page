@@ -68,3 +68,15 @@ export const applyDocumentCnpjMask = (value: string) => {
   }
   return value;
 };
+
+export const applyZipCodeMask = (value: string): string => {
+  value = value.replace(/\D/g, '');
+  if (value.length === 0) return '';
+  if (value.length <= 5) return value;
+  return `${value.slice(0, 5)}-${value.slice(5, 8)}`;
+};
+
+export const applyHouseNumberMask = (value: string): string => {
+  value = value.replace(/\D/g, '');
+  return value;
+};

@@ -1,3 +1,4 @@
+import { AddressData } from './address';
 import { UserData } from './user';
 
 export interface PartnerSupplierData extends UserData {
@@ -5,6 +6,6 @@ export interface PartnerSupplierData extends UserData {
   companyName: string;
   document: string;
   stateRegistration: string;
-  address: string;
+  address: AddressData;
   contact: string;
 }
