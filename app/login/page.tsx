@@ -2,7 +2,7 @@
 
 import type React from 'react';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, ChangeEvent } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,8 @@ import {
   Milestone,
   Warehouse,
   Compass,
+  UploadCloud,
+  X,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
@@ -37,7 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { toast } from 'sonner';
-import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyRgMask, applyZipCodeMask } from '@/utils/masks';
+import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyZipCodeMask } from '@/utils/masks';
 import Image from 'next/image';
 import { PartnerSupplierData, ProfessionalData, RegisterDTO } from '../types';
 
@@ -47,6 +49,68 @@ export default function LoginPage() {
   const [registerType, setRegisterType] = useState<'professional' | 'partnerSupplier'>('professional');
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mounted, setMounted] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(file);
+      const img = new window.Image();
+
+      img.src = imageUrl;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          alert('Could not process the image');
+          URL.revokeObjectURL(imageUrl);
+          return;
+        }
+
+        const size = Math.min(img.width, img.height);
+        const offsetX = (img.width - size) / 2;
+        const offsetY = (img.height - size) / 2;
+
+        canvas.width = size;
+        canvas.height = size;
+
+        ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+
+        setPhoto(dataUrl);
+
+        URL.revokeObjectURL(imageUrl);
+        console.log(imageUrl);
+      };
+
+      img.onerror = () => {
+        alert('Error loading the image');
+        URL.revokeObjectURL(imageUrl);
+      };
+    }
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -116,7 +180,7 @@ export default function LoginPage() {
     setLoginError(null);
 
     try {
-      const response = await fetch('https://up-backend-production.up.railway.app/api/auth/login', {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +202,7 @@ export default function LoginPage() {
       localStorage.setItem('token', data.access_token);
 
       toast.success('Login realizado com sucesso!');
-      router.push('/');
+      router.push('http://localhost:3000/dashboard');
     } catch (error: any) {
       console.error('Erro no login:', error);
       toast.error('Erro de indisponibilidade, contate o administrador.');
@@ -201,12 +265,41 @@ export default function LoginPage() {
 
     const isProfessional = registerType === 'professional';
     const data = isProfessional ? professionalData : partnerSupplierData;
-    const url = `https://up-backend-production.up.railway.app/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
+    const url = `http://localhost:8080/api/${isProfessional ? 'professional' : 'partner-supplier'}`;
 
     if (data.password !== data.confirmPassword) {
       toast.error('As senhas não coincidem.');
       setIsRegisterLoading(false);
       return;
+    }
+
+    let uploadedImageUrl: string | null = null;
+
+    if (photo) {
+      try {
+        const formData = new FormData();
+        formData.append('file', photo);
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
+
+        const response = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error?.message || 'Erro ao fazer upload da imagem');
+        }
+
+        uploadedImageUrl = result.secure_url;
+      } catch (error: any) {
+        console.error('Erro no upload da imagem:', error);
+        toast.error('Erro ao salvar a foto de perfil. O cadastro continuará sem a foto.');
+      }
     }
 
     const payload: RegisterDTO = {
@@ -226,6 +319,7 @@ export default function LoginPage() {
         generalRegister: prof.generalRegister,
         registrationAgency: prof.registrationAgency,
         phone: prof.phone,
+        profileImage: uploadedImageUrl || '',
         address: {
           city: prof.address.city,
           complement: prof.address.complement,
@@ -244,6 +338,7 @@ export default function LoginPage() {
         document: partner.document,
         stateRegistration: partner.stateRegistration,
         contact: partner.contact,
+        profileImage: uploadedImageUrl || '',
         address: {
           city: partner.address.city,
           complement: partner.address.complement,
@@ -262,6 +357,7 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error((await res.json()).message || 'Erro no cadastro.');
 
       toast.success('Cadastro realizado com sucesso! Redirecionando para o login...');
@@ -319,6 +415,10 @@ export default function LoginPage() {
       }));
     });
   }, [professionalData.address.zipCode]);
+
+  useEffect(() => {
+    removePhoto();
+  }, [registerType]);
 
   useEffect(() => {
     const zip = partnerSupplierData.address.zipCode;
@@ -625,6 +725,47 @@ export default function LoginPage() {
                   {registerType === 'professional' && (
                     <form onSubmit={handleRegisterSubmit} className="space-y-6">
                       <div className="space-y-4">
+                        <div className="space-y-4">
+                          <div className="flex flex-col items-center">
+                            {!photo ? (
+                              <div
+                                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center w-full cursor-pointer hover:border-primary transition-colors"
+                                onClick={triggerFileInput}
+                              >
+                                <input
+                                  ref={fileInputRef}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleFileChange}
+                                  className="hidden"
+                                />
+                                <UploadCloud className="h-12 w-12 text-gray-300 mb-2 mx-auto" />
+                                <p className="text-sm text-gray-300">Clique para enviar sua foto de perfil</p>
+                              </div>
+                            ) : (
+                              <div className="relative">
+                                <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-gray-200">
+                                  <img
+                                    src={photo || '/placeholder.svg'}
+                                    alt="Profile photo"
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={removePhoto}
+                                    className="rounded-full shadow-md"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                         <div className="space-y-2">
                           <Label htmlFor="name" className="text-sm font-medium">
                             Nome completo
@@ -1024,6 +1165,47 @@ export default function LoginPage() {
                   {/* Partner Supplier Registration Form */}
                   {registerType === 'partnerSupplier' && (
                     <form onSubmit={handleRegisterSubmit} className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="flex flex-col items-center">
+                          {!photo ? (
+                            <div
+                              className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center w-full cursor-pointer hover:border-primary transition-colors"
+                              onClick={triggerFileInput}
+                            >
+                              <input
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="hidden"
+                              />
+                              <UploadCloud className="h-12 w-12 text-gray-300 mb-2 mx-auto" />
+                              <p className="text-sm text-gray-300">Clique para enviar sua foto de perfil</p>
+                            </div>
+                          ) : (
+                            <div className="relative">
+                              <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-gray-200">
+                                <img
+                                  src={photo || '/placeholder.svg'}
+                                  alt="Profile photo"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <div className="absolute -bottom-2 -right-2 flex gap-2">
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={removePhoto}
+                                  className="rounded-full shadow-md"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="trade-name" className="text-sm font-medium">

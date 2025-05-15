@@ -8,4 +8,5 @@ export interface PartnerSupplierData extends UserData {
   stateRegistration: string;
   address: AddressData;
   contact: string;
+  profileImage: string;
 }

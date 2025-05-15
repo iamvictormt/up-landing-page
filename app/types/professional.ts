@@ -10,4 +10,5 @@ export interface ProfessionalData extends UserData {
   registrationAgency: string;
   address: AddressData;
   phone: string;
+  profileImage: string;
 }
