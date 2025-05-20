@@ -32,6 +32,7 @@ import {
   Compass,
   UploadCloud,
   X,
+  Heart,
 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRouter } from 'next/navigation';
@@ -47,7 +48,9 @@ import Cookies from 'js-cookie';
 export default function LoginPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('login');
-  const [registerType, setRegisterType] = useState<'professional' | 'partnerSupplier'>('professional');
+  const [registerType, setRegisterType] = useState<'professional' | 'partnerSupplier' | 'loveDecoration'>(
+    'loveDecoration'
+  );
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [mounted, setMounted] = useState(false);
   const [photo, setPhoto] = useState<string | null>(null);
@@ -123,6 +126,23 @@ export default function LoginPage() {
   });
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
+
+  const [loveDecorationData, setLoveDecorationData] = useState({
+    name: '',
+    contact: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    address: {
+      state: '',
+      city: '',
+      district: '',
+      street: '',
+      complement: '',
+      number: '',
+      zipCode: '',
+    },
+  });
 
   const [professionalData, setProfessionalData] = useState({
     name: '',
@@ -230,6 +250,25 @@ export default function LoginPage() {
       setProfessionalData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
     } else if (name === 'document') {
       setProfessionalData((prev) => ({ ...prev, [name]: applyDocumentMask(value) }));
+    } else {
+      setProfessionalData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleLoveDecorationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    if (name.startsWith('address.')) {
+      const addressField = name.split('.')[1];
+      setProfessionalData((prev) => ({
+        ...prev,
+        address: {
+          ...prev.address,
+          [addressField]: value,
+        },
+      }));
+    } else if (name === 'phone') {
+      setProfessionalData((prev) => ({ ...prev, [name]: applyPhoneMask(value) }));
     } else {
       setProfessionalData((prev) => ({ ...prev, [name]: value }));
     }
@@ -662,8 +701,40 @@ export default function LoginPage() {
                     <p className="text-muted-foreground">Escolha o tipo de cadastro</p>
                   </div>
 
-                  {/* Register Type Selector */}
                   <div className="flex gap-4 mb-6">
+                  
+                  </div>
+
+                  {/* Register Type Selector */}
+                  <div className="col-12 flex gap-4 mb-6">
+                      <button
+                      type="button"
+                      onClick={() => setRegisterType('loveDecoration')}
+                      className={cn(
+                        'flex-1 flex flex-col items-center gap-2 p-4 rounded-lg border transition-all duration-300',
+                        registerType === 'loveDecoration'
+                          ? 'bg-primary/20 border-primary shadow-md'
+                          : 'bg-card/30 border-border/50 hover:bg-card/50'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'flex items-center justify-center h-12 w-12 rounded-full',
+                          registerType === 'loveDecoration' ? 'bg-primary/30' : 'bg-primary/10'
+                        )}
+                      >
+                        <Heart
+                          className={cn(
+                            'h-6 w-6',
+                            registerType === 'loveDecoration' ? 'text-primary-foreground' : 'text-primary'
+                          )}
+                        />
+                      </div>
+                      <div className="text-center">
+                        <p className="font-medium">Eu amo decoração</p>
+                        <p className="text-xs text-muted-foreground"></p>
+                      </div>
+                    </button>
                     <button
                       type="button"
                       onClick={() => setRegisterType('professional')}
@@ -722,6 +793,332 @@ export default function LoginPage() {
                       </div>
                     </button>
                   </div>
+
+                  {/* Love Decoration Registration Form */}
+                  {registerType === 'loveDecoration' && (
+                    <form onSubmit={handleRegisterSubmit} className="space-y-6">
+                      <div className="space-y-4">
+                        <div className="space-y-4">
+                          <div className="flex flex-col items-center">
+                            {!photo ? (
+                              <div
+                                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center w-full cursor-pointer hover:border-primary transition-colors"
+                                onClick={triggerFileInput}
+                              >
+                                <input
+                                  ref={fileInputRef}
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleFileChange}
+                                  className="hidden"
+                                />
+                                <UploadCloud className="h-12 w-12 text-gray-300 mb-2 mx-auto" />
+                                <p className="text-sm text-gray-300">Clique para enviar sua foto de perfil</p>
+                              </div>
+                            ) : (
+                              <div className="relative">
+                                <div className="w-64 h-64 rounded-full overflow-hidden border-4 border-gray-200">
+                                  <img
+                                    src={photo || '/placeholder.svg'}
+                                    alt="Profile photo"
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 flex gap-2">
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="icon"
+                                    onClick={removePhoto}
+                                    className="rounded-full shadow-md"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="name" className="text-sm font-medium">
+                            Nome completo
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="name"
+                              name="name"
+                              type="text"
+                              value={loveDecorationData.name}
+                              onChange={handleLoveDecorationChange}
+                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                              placeholder="Ex: Ana Maria da Silva"
+                              required
+                              disabled={registerSuccess}
+                            />
+                            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="contact" className="text-sm font-medium">
+                              Contato
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="contact"
+                                name="contact"
+                                type="tel"
+                                value={loveDecorationData.contact}
+                                onChange={handleLoveDecorationChange}
+                                onBlur={(e) => {
+                                  e.target.value.length !== 15
+                                    ? setProfessionalData((prev) => ({ ...prev, phone: '' }))
+                                    : '';
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: (00) 00000-0000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="professional-email" className="text-sm font-medium">
+                              Email
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="professional-email"
+                                name="email"
+                                type="email"
+                                value={loveDecorationData.email}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: contato@teste.com.br"
+                                required
+                                maxLength={55}
+                                disabled={registerSuccess}
+                              />
+                              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.zipCode" className="text-sm font-medium">
+                              CEP
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.zipCode"
+                                name="address.zipCode"
+                                type="text"
+                                value={loveDecorationData.address.zipCode}
+                                onChange={(e) => {
+                                  const masked = applyZipCodeMask(e.target.value);
+                                  setLoveDecorationData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      zipCode: masked,
+                                    },
+                                  }));
+                                }}
+                                maxLength={9}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 00000-000"
+                                required
+                                disabled={registerSuccess}
+                              />
+                              <Pin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.state" className="text-sm font-medium">
+                              Estado
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.state"
+                                name="address.state"
+                                value={loveDecorationData.address.state}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <MapPinHouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.city" className="text-sm font-medium">
+                              Cidade
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.city"
+                                name="address.city"
+                                value={loveDecorationData.address.city}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: São Paulo"
+                                required
+                                disabled={true}
+                              />
+                              <Map className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.district" className="text-sm font-medium">
+                              Bairro
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.district"
+                                name="address.district"
+                                value={loveDecorationData.address.district}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bela Vista"
+                                required
+                                maxLength={2}
+                                disabled={registerSuccess}
+                              />
+                              <MapPinned className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="address.street" className="text-sm font-medium">
+                            Rua
+                          </Label>
+                          <div className="relative">
+                            <Input
+                              id="address.street"
+                              name="address.street"
+                              value={loveDecorationData.address.street}
+                              onChange={handleLoveDecorationChange}
+                              className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                              placeholder="Ex: Bela Vista"
+                              required
+                              maxLength={60}
+                              disabled={registerSuccess}
+                            />
+                            <Milestone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="address.number" className="text-sm font-medium">
+                              Número
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.number"
+                                name="address.number"
+                                value={loveDecorationData.address.number}
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(/\D/g, '');
+                                  setLoveDecorationData((prev) => ({
+                                    ...prev,
+                                    address: {
+                                      ...prev.address,
+                                      number: value,
+                                    },
+                                  }));
+                                }}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: 30"
+                                required
+                                maxLength={6}
+                                disabled={registerSuccess}
+                              />
+                              <Warehouse className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="address.complement" className="text-sm font-medium">
+                              Complemento
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="address.complement"
+                                name="address.complement"
+                                value={loveDecorationData.address.complement}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                placeholder="Ex: Bloco B, Apto 12"
+                                maxLength={60}
+                                disabled={registerSuccess}
+                              />
+                              <Compass className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="password" className="text-sm font-medium">
+                              Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={loveDecorationData.password}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                maxLength={22}
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                              Confirmar Senha
+                            </Label>
+                            <div className="relative">
+                              <Input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type="password"
+                                value={loveDecorationData.confirmPassword}
+                                onChange={handleLoveDecorationChange}
+                                className="pl-10 bg-card/50 border-border/50 focus:border-primary"
+                                required
+                                maxLength={22}
+                                disabled={registerSuccess}
+                              />
+                              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            </div>{' '}
+                          </div>
+                        </div>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+                        disabled={isRegisterLoading || registerSuccess}
+                      >
+                        {isRegisterLoading ? 'Cadastrando...' : 'Cadastrar como Eu amo decoração'}
+                      </Button>
+                    </form>
+                  )}
 
                   {/* Professional Registration Form */}
                   {registerType === 'professional' && (
