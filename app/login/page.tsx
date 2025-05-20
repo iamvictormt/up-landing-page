@@ -42,6 +42,7 @@ import { toast } from 'sonner';
 import { applyDocumentCnpjMask, applyDocumentMask, applyPhoneMask, applyZipCodeMask } from '@/utils/masks';
 import Image from 'next/image';
 import { PartnerSupplierData, ProfessionalData, RegisterDTO } from '../types';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -199,10 +200,11 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.access_token);
+      Cookies.set('token', data.access_token, { expires: 1 / 24 });
+      Cookies.set('user', JSON.stringify(data.user), { expires: 1 / 24 });
 
       toast.success('Login realizado com sucesso!');
-      router.push('http://localhost:3000/dashboard');
+      router.push(`http://localhost:3001/${data.role === 'PROFESSIONAL' ? 'dashboard' : 'enterprise/dashboard'}`);
     } catch (error: any) {
       console.error('Erro no login:', error);
       toast.error('Erro de indisponibilidade, contate o administrador.');
