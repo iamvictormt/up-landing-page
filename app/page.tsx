@@ -68,12 +68,12 @@ export default function LandingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Link href="/login" target="_blank" rel="noopener noreferrer">
+            <Link href="https://up-dashboard-two.vercel.app/login" target="_blank" rel="noopener noreferrer">
               <Button
                 variant="outline"
                 className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
                 onClick={() => {
-                  window.open('/login', '_blank');
+                  window.open('https://up-dashboard-two.vercel.app/login', '_blank');
                   window.close();
                 }}
               >
