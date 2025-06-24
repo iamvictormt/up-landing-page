@@ -105,7 +105,7 @@ export default function LandingPage() {
               variant="outline"
               className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
               onClick={() => {
-                window.open('https://sistema.upconnection.app/login', '_blank');
+                window.open(`${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/login`, '_blank');
                 window.close();
               }}
             >
