@@ -6,9 +6,29 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Users, Lightbulb, TrendingUp, Linkedin, Instagram, LogIn, PiggyBank } from 'lucide-react';
+import {
+  CheckCircle,
+  Users,
+  Lightbulb,
+  TrendingUp,
+  Linkedin,
+  Instagram,
+  LogIn,
+  PiggyBank,
+  ChevronDown,
+  Heart,
+  Briefcase,
+  Handshake,
+  CirclePlus,
+} from 'lucide-react';
 import { Carousel } from '@/components/carousel';
 import { PlansModal } from '@/components/plans-modal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function LandingPage() {
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -17,6 +37,19 @@ export default function LandingPage() {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleSignup = (e: React.MouseEvent, userType: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const signupUrls = {
+      loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=loveDecoration`,
+      professional: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=professional`,
+      partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partnerSupplier`,
+    };
+
+    window.open(signupUrls[userType as keyof typeof signupUrls], '_blank');
   };
 
   return (
@@ -79,14 +112,57 @@ export default function LandingPage() {
               <LogIn />
               Login
             </Button>
-            <PlansModal
-              trigger={
-                <Button className="w-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
-                  <PiggyBank />
-                  Associe-se
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
+                  Junte-se a nós
+                  <ChevronDown className="w-4 h-4 ml-2" />
                 </Button>
-              }
-            />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56" sideOffset={5} avoidCollisions={true}>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSignup(e, 'loveDecoration');
+                  }}
+                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
+                >
+                  <Heart className="w-4 h-4 mr-3 text-pink-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Eu amo decoração</span>
+                    <span className="text-xs text-muted-foreground">Para entusiastas</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSignup(e, 'professional');
+                  }}
+                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
+                >
+                  <Briefcase className="w-4 h-4 mr-3 text-blue-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Profissionais</span>
+                    <span className="text-xs text-muted-foreground">Arquitetos e designers</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSignup(e, 'partnerSupplier');
+                  }}
+                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
+                >
+                  <Handshake className="w-4 h-4 mr-3 text-green-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Fornecedor parceiro</span>
+                    <span className="text-xs text-muted-foreground">Empresas e lojas</span>
+                  </div>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -96,12 +172,12 @@ export default function LandingPage() {
           <Carousel />
           <div className="container pb-12 pt-4">
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto sm:mx-0">
-              <Button
+              {/* <Button
                 size="lg"
                 className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
               >
                 Junte-se ao clube
-              </Button>
+              </Button> */}
               <Link
                 href="#fundadoras"
                 className="text-sm font-medium transition-colors hover:text-primary"
@@ -480,29 +556,12 @@ export default function LandingPage() {
               Junte-se ao UP - Club de Negócios e faça parte de uma comunidade que valoriza conexão, colaboração e
               crescimento profissional.
             </p>
-            <PlansModal
-              trigger={
-                <Button size="lg" className="transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
-                  <PiggyBank />
-                  Associe-se
-                </Button>
-              }
-            />
           </div>
         </section>
       </main>
 
       <footer className="border-t py-12 bg-card/50">
-        <div className="container grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-4">
-            <div className="font-bold text-xl">
-              <span className="text-primary">UP</span> Connection
-            </div>
-            <p className="text-muted-foreground">
-              Conectando profissionais, impulsionando negócios no setor criativo e técnico.
-            </p>
-          </div>
-
+        <div className="container grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-4">
             <h3 className="font-bold">Links Rápidos</h3>
             <ul className="space-y-2">
@@ -557,28 +616,25 @@ export default function LandingPage() {
           <div className="space-y-4">
             <h3 className="font-bold">Contato</h3>
             <ul className="space-y-2">
-              <li className="text-muted-foreground">contato@upclubdenegocios.com.br</li>
-              <li className="text-muted-foreground">+55 (11) 99999-9999</li>
+              <li className="text-muted-foreground">upconnection01@gmail.com</li>
+              <li className="text-muted-foreground">+55 (11) 96454-0818</li>
               <li className="text-muted-foreground">São Paulo, SP - Brasil</li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-bold">Inscreva-se</h3>
-            <p className="text-muted-foreground">Receba novidades e informações sobre nossos eventos.</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                placeholder="Seu e-mail"
-                className="flex h-10 w-full rounded-md border border-input bg-card/50 px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              />
-              <Button
-                type="submit"
-                variant="outline"
-                className="border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+            <h3 className="font-bold">Redes Sociais</h3>
+            <p className="text-muted-foreground">Siga-nos e fique por dentro de todas as novidades!</p>
+            <div className="flex gap-4">
+              <a
+                href="https://instagram.com/upconnection"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10
+               text-white hover:shadow-lg transition-all duration-300 hover:scale-110"
               >
-                Enviar
-              </Button>
+                <Instagram className="w-5 h-5" />
+              </a>
             </div>
           </div>
         </div>
