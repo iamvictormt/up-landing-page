@@ -470,9 +470,9 @@ export default function LandingPage() {
             <div className="grid gap-8 md:grid-cols-2">
               {/* Rosangela Ferraz */}
               <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[300px] w-full">
+                <div className="relative h-[40vh] w-[50%] place-self-center">
                   <Image
-                    src="/placeholder.svg?height=600&width=800"
+                    src="/rosangela.jpeg?height=600&width=800"
                     alt="Rosangela Ferraz - Fundadora do UP Club"
                     fill
                     className="object-cover"
@@ -504,7 +504,7 @@ export default function LandingPage() {
 
               {/* Meire Ferraz */}
               <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[300px] w-full">
+                <div className="relative h-[40vh] w-[100%]">
                   <Image
                     src="/placeholder.svg?height=600&width=800"
                     alt="Meire Ferraz - Fundadora do UP Club"
