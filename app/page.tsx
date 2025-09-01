@@ -44,9 +44,9 @@ export default function LandingPage() {
     e.stopPropagation();
 
     const signupUrls = {
-      loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=loveDecoration`,
+      loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=love-decoration`,
       professional: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=professional`,
-      partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partnerSupplier`,
+      partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partner-supplier`,
     };
 
     window.open(signupUrls[userType as keyof typeof signupUrls], '_blank');
