@@ -157,7 +157,7 @@ export default function LandingPage() {
                 >
                   <Handshake className="w-4 h-4 mr-3 text-green-500" />
                   <div className="flex flex-col">
-                    <span className="font-medium">Fornecedor parceiro</span>
+                    <span className="font-medium">Lojista parceiro</span>
                     <span className="text-xs text-muted-foreground">Empresas e lojas</span>
                   </div>
                 </DropdownMenuItem>
