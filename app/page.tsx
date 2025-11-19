@@ -31,6 +31,30 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function LandingPage() {
+  const testimonials = [
+    {
+      text: `Desde que me tornei membro do UP, minha rede de contatos se expandiu significativamente e já fechei
+    parcerias importantes para meu escritório de arquitetura.`,
+      name: 'Ana Oliveira',
+      role: 'Arquiteta',
+      image: '/placeholder.svg?height=100&width=100',
+    },
+    {
+      text: `O ambiente colaborativo do clube me permitiu encontrar parceiros ideais para projetos complexos,
+    além de me proporcionar aprendizados valiosos com outros profissionais.`,
+      name: 'Carlos Mendes',
+      role: 'Engenheiro Civil',
+      image: '/placeholder.svg?height=100&width=100',
+    },
+    {
+      text: `As conexões que fiz no UP transformaram minha carreira. Os eventos exclusivos e as oportunidades de
+    networking são incomparáveis.`,
+      name: 'Mariana Costa',
+      role: 'Designer de Interiores',
+      image: '/placeholder.svg?height=100&width=100',
+    },
+  ];
+
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -378,77 +402,30 @@ export default function LandingPage() {
             </div>
 
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <p className="italic text-muted-foreground">
-                    "Desde que me tornei membro do UP, minha rede de contatos se expandiu significativamente e já fechei
-                    parcerias importantes para meu escritório de arquitetura."
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
-                      <Image
-                        src="/placeholder.svg?height=100&width=100"
-                        alt="Foto de perfil"
-                        width={48}
-                        height={48}
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-bold">Ana Oliveira</p>
-                      <p className="text-sm text-muted-foreground">Arquiteta</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              {testimonials.map((item, index) => (
+                <Card key={index}>
+                  <CardContent className="p-6 space-y-4">
+                    <p className="italic text-muted-foreground">"{item.text}"</p>
 
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <p className="italic text-muted-foreground">
-                    "O ambiente colaborativo do clube me permitiu encontrar parceiros ideais para projetos complexos,
-                    além de me proporcionar aprendizados valiosos com outros profissionais."
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
-                      <Image
-                        src="/placeholder.svg?height=100&width=100"
-                        alt="Foto de perfil"
-                        width={48}
-                        height={48}
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-bold">Carlos Mendes</p>
-                      <p className="text-sm text-muted-foreground">Engenheiro Civil</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="flex items-center gap-4">
+                      {/* <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
+                        <Image
+                          src={item.image}
+                          alt={`Foto de ${item.name}`}
+                          width={48}
+                          height={48}
+                          className="object-cover"
+                        />
+                      </div> */}
 
-              <Card>
-                <CardContent className="p-6 space-y-4">
-                  <p className="italic text-muted-foreground">
-                    "As conexões que fiz no UP transformaram minha carreira. Os eventos exclusivos e as oportunidades de
-                    networking são incomparáveis."
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
-                      <Image
-                        src="/placeholder.svg?height=100&width=100"
-                        alt="Foto de perfil"
-                        width={48}
-                        height={48}
-                        className="object-cover"
-                      />
+                      <div>
+                        <p className="font-bold">{item.name}</p>
+                        <p className="text-sm text-muted-foreground">{item.role}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold">Mariana Costa</p>
-                      <p className="text-sm text-muted-foreground">Designer de Interiores</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </section>
@@ -470,12 +447,12 @@ export default function LandingPage() {
             <div className="grid gap-8 md:grid-cols-2">
               {/* Rosangela Ferraz */}
               <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[40vh] w-[50%] place-self-center">
+                <div className="relative h-[50vh] w-[50%] place-self-center">
                   <Image
                     src="/rosangela.jpeg?height=600&width=800"
                     alt="Rosangela Ferraz - Fundadora do UP Club"
                     fill
-                    className="object-cover"
+                    className="object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <CardContent className="p-6 flex flex-col flex-1">
@@ -489,7 +466,7 @@ export default function LandingPage() {
                     em grandes escritórios antes de fundar seu próprio estúdio. Sua paixão por networking e
                     desenvolvimento profissional foi a semente que deu origem ao UP Club.
                   </p>
-                  <div className="flex gap-3 mt-4">
+                  {/* <div className="flex gap-3 mt-4">
                     <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
                       <Linkedin className="h-4 w-4" />
                       <span className="sr-only">LinkedIn de Rosangela Ferraz</span>
@@ -498,32 +475,33 @@ export default function LandingPage() {
                       <Instagram className="h-4 w-4" />
                       <span className="sr-only">Instagram de Rosangela Ferraz</span>
                     </Button>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
 
               {/* Meire Ferraz */}
               <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[40vh] w-[100%]">
+                <div className="relative h-[50vh] w-[50%] place-self-center">
                   <Image
-                    src="/placeholder.svg?height=600&width=800"
+                    src="/meire.jpeg?height=600&width=800"
                     alt="Meire Ferraz - Fundadora do UP Club"
                     fill
-                    className="object-cover"
+                    className="object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <CardContent className="p-6 flex flex-col flex-1">
                   <div className="mb-4">
                     <h3 className="text-2xl font-bold">Meire Ferraz</h3>
-                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
+                    <p className="text-primary font-medium">Co-fundadora & Relações Públicas</p>
                   </div>
                   <p className="text-muted-foreground flex-1">
-                    Com mais de 15 anos de experiência em projetos residenciais e comerciais, Meire Ferraz traz sua
-                    visão estratégica e paixão por conexões genuínas para o UP Club. Formada pela Universidade de São
-                    Paulo, especializou-se em design de interiores sustentáveis e já liderou mais de 200 projetos em sua
-                    carreira.
+                    Formada em Publicidade e Propaganda, desenvolvo e realizo estratégias de relacionamento que conectam
+                    lojistas e profissionais de decoração no mercado de alto padrão. Conduzo ações, visitas e eventos
+                    que fortalecem parcerias, ampliam oportunidades e aproximam marcas do público especializado. Minha
+                    atuação contribui para posicionar a UP Connection como uma plataforma de referência em conexões
+                    qualificadas e experiências de excelência.
                   </p>
-                  <div className="flex gap-3 mt-4">
+                  {/* <div className="flex gap-3 mt-4">
                     <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
                       <Linkedin className="h-4 w-4" />
                       <span className="sr-only">LinkedIn de Meire Ferraz</span>
@@ -532,7 +510,7 @@ export default function LandingPage() {
                       <Instagram className="h-4 w-4" />
                       <span className="sr-only">Instagram de Meire Ferraz</span>
                     </Button>
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             </div>
@@ -627,7 +605,7 @@ export default function LandingPage() {
             <p className="text-muted-foreground">Siga-nos e fique por dentro de todas as novidades!</p>
             <div className="flex gap-4">
               <a
-                href="https://instagram.com/upconnection"
+                href="https://instagram.com/updesigners_e_arquitetos"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10
