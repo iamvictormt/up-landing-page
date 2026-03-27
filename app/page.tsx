@@ -437,90 +437,90 @@ export default function LandingPage() {
               <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
                 Nossas Fundadoras
               </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Conheça quem está por trás do UP Club</h2>
+
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Conheça quem está por trás do UP Club
+              </h2>
+
               <p className="text-muted-foreground text-lg">
-                Duas arquitetas de interiores que uniram suas experiências e visões para criar uma comunidade única de
-                profissionais.
+                Duas profissionais que uniram experiência, visão estratégica e networking
+                para criar uma comunidade forte no mercado de arquitetura e design.
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* Rosangela Ferraz */}
-              <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[50vh] w-[50%] place-self-center">
-                  <Image
-                    src="/rosangela.jpeg?height=600&width=800"
-                    alt="Rosangela Ferraz - Fundadora do UP Club"
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardContent className="p-6 flex flex-col flex-1">
-                  <div className="mb-4">
-                    <h3 className="text-2xl font-bold">Rosangela Ferraz</h3>
-                    <p className="text-primary font-medium">Co-fundadora & Arquiteta de Interiores</p>
-                  </div>
-                  <p className="text-muted-foreground flex-1">
-                    Rosangela Ferraz combina criatividade e visão de negócios em sua abordagem para a arquitetura de
-                    interiores. Formada pela Mackenzie com especialização em design corporativo, ela acumula experiência
-                    em grandes escritórios antes de fundar seu próprio estúdio. Sua paixão por networking e
-                    desenvolvimento profissional foi a semente que deu origem ao UP Club.
-                  </p>
-                  {/* <div className="flex gap-3 mt-4">
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Linkedin className="h-4 w-4" />
-                      <span className="sr-only">LinkedIn de Rosangela Ferraz</span>
-                    </Button>
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Instagram className="h-4 w-4" />
-                      <span className="sr-only">Instagram de Rosangela Ferraz</span>
-                    </Button>
-                  </div> */}
-                </CardContent>
-              </Card>
-
-              {/* Meire Ferraz */}
-              <Card className="overflow-hidden flex flex-col h-full">
-                <div className="relative h-[50vh] w-[50%] place-self-center">
-                  <Image
-                    src="/meire.jpeg?height=600&width=800"
-                    alt="Meire Ferraz - Fundadora do UP Club"
-                    fill
-                    className="object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <CardContent className="p-6 flex flex-col flex-1">
-                  <div className="mb-4">
-                    <h3 className="text-2xl font-bold">Meire Ferraz</h3>
-                    <p className="text-primary font-medium">Co-fundadora & Relações Públicas</p>
-                  </div>
-                  <p className="text-muted-foreground flex-1">
-                    Formada em Publicidade e Propaganda, desenvolvo e realizo estratégias de relacionamento que conectam
-                    lojistas e profissionais de decoração no mercado de alto padrão. Conduzo ações, visitas e eventos
-                    que fortalecem parcerias, ampliam oportunidades e aproximam marcas do público especializado. Minha
-                    atuação contribui para posicionar a UP Connection como uma plataforma de referência em conexões
-                    qualificadas e experiências de excelência.
-                  </p>
-                  {/* <div className="flex gap-3 mt-4">
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Linkedin className="h-4 w-4" />
-                      <span className="sr-only">LinkedIn de Meire Ferraz</span>
-                    </Button>
-                    <Button variant="outline" size="icon" className="rounded-full bg-primary/10">
-                      <Instagram className="h-4 w-4" />
-                      <span className="sr-only">Instagram de Meire Ferraz</span>
-                    </Button>
-                  </div> */}
-                </CardContent>
-              </Card>
+            {/* IMAGEM ÚNICA DAS DUAS */}
+            <div className="w-full max-w-[700px] mx-auto mb-12">
+              <Image
+                src="/fundadoras.jpeg"
+                alt="Rosangela e Meire Ferraz - Fundadoras do UP Club"
+                width={800}
+                height={1200} // coloca proporção real da imagem (importante!)
+                className="w-full h-auto object-contain rounded-xl"
+                priority
+              />
             </div>
 
+            {/* TEXTOS */}
+            <div className="grid gap-8 md:grid-cols-2">
+              {/* Rosangela */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold">Rosangela Ferraz</h3>
+                  <p className="text-primary font-medium">
+                    Co-fundadora & Arquiteta de Interiores
+                  </p>
+                </div>
+
+                <p className="text-muted-foreground">
+                  Rosangela Ferraz é uma profissional de destaque no mercado de design de
+                  interiores em São Paulo, com uma atuação que integra criação,
+                  relacionamento e estratégia.
+                </p>
+
+                <p className="text-muted-foreground">
+                  Pós-graduada pela FAAP em Design de Interiores, é fundadora do escritório
+                  Rosangela Ferraz Interior Design e idealizadora da UP Connection, grupo
+                  voltado à conexão entre arquitetos, designers e lojistas.
+                </p>
+
+                <p className="text-muted-foreground">
+                  Também atua como Relações Públicas no segmento de decoração e arquitetura,
+                  promovendo parcerias estratégicas no mercado de alto padrão.
+                </p>
+              </div>
+
+              {/* Meire */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold">Meire Ferraz</h3>
+                  <p className="text-primary font-medium">
+                    Co-fundadora & Relações Públicas
+                  </p>
+                </div>
+
+                <p className="text-muted-foreground">
+                  Formada em Publicidade e Propaganda, Meire Ferraz é especialista em
+                  relacionamento estratégico no mercado de decoração e design.
+                </p>
+
+                <p className="text-muted-foreground">
+                  Atua conectando lojistas e profissionais por meio de ações, visitas e
+                  eventos que fortalecem parcerias e geram novas oportunidades de negócio.
+                </p>
+
+                <p className="text-muted-foreground">
+                  Sua atuação contribui diretamente para posicionar a UP Connection como
+                  referência em conexões qualificadas e experiências de alto nível.
+                </p>
+              </div>
+            </div>
+
+            {/* TEXTO FINAL */}
             <div className="mt-12 text-center">
               <p className="text-lg max-w-[800px] mx-auto text-muted-foreground">
-                Juntas, Meire Ferraz e Rosangela Ferraz combinam mais de 25 anos de experiência no setor de arquitetura
-                e design de interiores. Elas fundaram o UP Club com a missão de criar um espaço onde profissionais
-                possam crescer juntos, compartilhar conhecimentos e desenvolver parcerias estratégicas que beneficiem a
-                todos.
+                Juntas, somam mais de 25 anos de experiência no setor. O UP Club nasce
+                com o propósito de conectar profissionais, fortalecer relações e criar
+                oportunidades reais de crescimento no mercado de arquitetura e design.
               </p>
             </div>
           </div>
