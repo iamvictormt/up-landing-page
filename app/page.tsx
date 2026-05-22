@@ -71,6 +71,7 @@ export default function LandingPage() {
       loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=love-decoration`,
       professional: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=professional`,
       partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partner-supplier`,
+      wellness: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=wellness`,
     };
 
     window.open(signupUrls[userType as keyof typeof signupUrls], '_blank');
@@ -183,6 +184,20 @@ export default function LandingPage() {
                   <div className="flex flex-col">
                     <span className="font-medium">Lojista parceiro</span>
                     <span className="text-xs text-muted-foreground">Empresas e lojas</span>
+                  </div>
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    handleSignup(e, 'wellness');
+                  }}
+                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
+                >
+                  <CirclePlus className="w-4 h-4 mr-3 text-teal-500" />
+                  <div className="flex flex-col">
+                    <span className="font-medium">Wellness</span>
+                    <span className="text-xs text-muted-foreground">Bem-estar e saúde</span>
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
