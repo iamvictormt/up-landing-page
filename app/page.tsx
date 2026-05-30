@@ -2,27 +2,33 @@
 
 import type React from 'react';
 
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import {
+  ArrowRight,
+  Award,
+  Briefcase,
+  CalendarDays,
+  CheckCircle,
+  ChevronDown,
+  CirclePlus,
+  Heart,
+  Handshake,
+  Instagram,
+  Lightbulb,
+  LogIn,
+  MapPin,
+  MessageCircle,
+  Network,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  TrendingUp,
+  Users,
+  Zap,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  CheckCircle,
-  Users,
-  Lightbulb,
-  TrendingUp,
-  Linkedin,
-  Instagram,
-  LogIn,
-  PiggyBank,
-  ChevronDown,
-  Heart,
-  Briefcase,
-  Handshake,
-  CirclePlus,
-} from 'lucide-react';
-import { Carousel } from '@/components/carousel';
-import { PlansModal } from '@/components/plans-modal';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,27 +37,101 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function LandingPage() {
+  const signupUrls = {
+    loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=love-decoration`,
+    professional: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=professional`,
+    partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partner-supplier`,
+    wellness: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=wellness`,
+  };
+
+  const metrics = [
+    { value: '+25', label: 'anos de relacionamento no mercado' },
+    { value: '4', label: 'perfis de entrada para a comunidade' },
+    { value: '100%', label: 'foco em conexões qualificadas' },
+  ];
+
+  const audiences = [
+    {
+      title: 'Arquitetos e designers',
+      description: 'Ganhe visibilidade, encontre fornecedores alinhados e amplie sua rede de indicações.',
+      icon: Briefcase,
+      color: 'text-blue-300',
+    },
+    {
+      title: 'Lojistas parceiros',
+      description: 'Aproxime sua marca de profissionais que especificam, indicam e movimentam projetos reais.',
+      icon: Handshake,
+      color: 'text-emerald-300',
+    },
+    {
+      title: 'Amo decoração',
+      description: 'Entre em uma comunidade que inspira escolhas, tendências e experiências no universo da casa.',
+      icon: Heart,
+      color: 'text-pink-300',
+    },
+    {
+      title: 'Wellness',
+      description: 'Conecte bem-estar, saúde e lifestyle a um público que valoriza experiências completas.',
+      icon: CirclePlus,
+      color: 'text-teal-300',
+    },
+  ];
+
+  const benefits = [
+    {
+      title: 'Networking que vira negócio',
+      description: 'Encontros pensados para criar conversas certas, parcerias estratégicas e novas oportunidades.',
+      icon: Network,
+    },
+    {
+      title: 'Autoridade e visibilidade',
+      description: 'Sua marca aparece em uma rede segmentada, com contexto profissional e relacionamento próximo.',
+      icon: Award,
+    },
+    {
+      title: 'Eventos com curadoria',
+      description: 'Palestras, visitas e ativações para aproximar pessoas que podem construir algo juntas.',
+      icon: CalendarDays,
+    },
+    {
+      title: 'Comunidade ativa',
+      description: 'Um ambiente contínuo para trocar indicações, ideias, experiências e boas práticas de mercado.',
+      icon: Users,
+    },
+    {
+      title: 'Parcerias inteligentes',
+      description: 'Conexão entre quem cria, quem fornece, quem compra e quem entrega experiências de alto valor.',
+      icon: Lightbulb,
+    },
+    {
+      title: 'Crescimento consistente',
+      description: 'Relacionamento, conteúdo e presença para fortalecer reputação e abrir portas ao longo do tempo.',
+      icon: TrendingUp,
+    },
+  ];
+
+  const steps = [
+    'Escolha seu perfil',
+    'Cadastre-se na plataforma',
+    'Participe das conexões e eventos',
+    'Transforme relacionamento em oportunidade',
+  ];
+
   const testimonials = [
     {
-      text: `Desde que me tornei membro do UP, minha rede de contatos se expandiu significativamente e já fechei
-    parcerias importantes para meu escritório de arquitetura.`,
+      text: 'O UP encurta caminhos. As conversas acontecem com quem entende o mercado e sabe gerar parceria de verdade.',
       name: 'Ana Oliveira',
       role: 'Arquiteta',
-      image: '/placeholder.svg?height=100&width=100',
     },
     {
-      text: `O ambiente colaborativo do clube me permitiu encontrar parceiros ideais para projetos complexos,
-    além de me proporcionar aprendizados valiosos com outros profissionais.`,
+      text: 'Entramos para nos aproximar dos profissionais certos e encontramos uma comunidade com muita troca qualificada.',
       name: 'Carlos Mendes',
-      role: 'Engenheiro Civil',
-      image: '/placeholder.svg?height=100&width=100',
+      role: 'Lojista parceiro',
     },
     {
-      text: `As conexões que fiz no UP transformaram minha carreira. Os eventos exclusivos e as oportunidades de
-    networking são incomparáveis.`,
+      text: 'Os eventos têm uma energia muito boa: conteúdo, relacionamento e oportunidades surgindo naturalmente.',
       name: 'Mariana Costa',
-      role: 'Designer de Interiores',
-      image: '/placeholder.svg?height=100&width=100',
+      role: 'Designer de interiores',
     },
   ];
 
@@ -63,380 +143,326 @@ export default function LandingPage() {
     }
   };
 
-  const handleSignup = (e: React.MouseEvent, userType: string) => {
+  const handleSignup = (e: { preventDefault: () => void; stopPropagation?: () => void }, userType: keyof typeof signupUrls) => {
     e.preventDefault();
-    e.stopPropagation();
+    e.stopPropagation?.();
 
-    const signupUrls = {
-      loveDecoration: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=love-decoration`,
-      professional: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=professional`,
-      partnerSupplier: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=partner-supplier`,
-      wellness: `${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/register?type=wellness`,
-    };
-
-    window.open(signupUrls[userType as keyof typeof signupUrls], '_blank');
+    window.open(signupUrls[userType], '_blank');
   };
 
-  return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      {/* <ThemeToggle /> */}
-      <header className="sticky top-0 z-40 border-b header-gradient">
-        <div className="container flex h-20 items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-xl">
-            <div className="relative w-16 h-16">
-              <Image src="/logo-up-completa.svg" alt="UP Club Logo" fill className="object-contain" priority />
-            </div>
+  const SignupMenu = ({ label = 'Junte-se agora', className = '' }: { label?: string; className?: string }) => (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button size="lg" className={`h-12 px-6 text-base shadow-lg shadow-primary/20 ${className}`}>
+          {label}
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-64" sideOffset={8} avoidCollisions>
+        <DropdownMenuItem
+          onSelect={(e) => handleSignup(e, 'loveDecoration')}
+          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
+        >
+          <Heart className="mr-3 h-4 w-4 text-pink-500" />
+          <div className="flex flex-col">
+            <span className="font-medium">Eu amo decoração</span>
+            <span className="text-xs text-muted-foreground">Para entusiastas</span>
           </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => handleSignup(e, 'professional')}
+          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
+        >
+          <Briefcase className="mr-3 h-4 w-4 text-blue-500" />
+          <div className="flex flex-col">
+            <span className="font-medium">Profissionais</span>
+            <span className="text-xs text-muted-foreground">Arquitetos e designers</span>
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => handleSignup(e, 'partnerSupplier')}
+          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
+        >
+          <Handshake className="mr-3 h-4 w-4 text-green-500" />
+          <div className="flex flex-col">
+            <span className="font-medium">Lojista parceiro</span>
+            <span className="text-xs text-muted-foreground">Empresas e lojas</span>
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => handleSignup(e, 'wellness')}
+          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
+        >
+          <CirclePlus className="mr-3 h-4 w-4 text-teal-500" />
+          <div className="flex flex-col">
+            <span className="font-medium">Wellness</span>
+            <span className="text-xs text-muted-foreground">Bem-estar e saúde</span>
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 
-          <nav className="hidden md:flex gap-6">
-            <Link
-              href="#sobre"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={(e) => scrollToSection(e, 'sobre')}
-            >
-              Sobre
-            </Link>
-            <Link
-              href="#valores"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={(e) => scrollToSection(e, 'valores')}
-            >
-              Valores
-            </Link>
-            <Link
-              href="#beneficios"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={(e) => scrollToSection(e, 'beneficios')}
-            >
-              Benefícios
-            </Link>
-            <Link
-              href="#depoimentos"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={(e) => scrollToSection(e, 'depoimentos')}
-            >
-              Depoimentos
-            </Link>
-            <Link
-              href="#fundadoras"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              onClick={(e) => scrollToSection(e, 'fundadoras')}
-            >
-              Fundadoras
-            </Link>
+  return (
+    <div className="flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-background/90 backdrop-blur-xl">
+        <div className="container flex h-20 items-center justify-between">
+          <Link href="#inicio" onClick={(e) => scrollToSection(e, 'inicio')} className="relative h-16 w-20">
+            <Image src="/logo-up-completa.svg" alt="UP Connection" fill className="object-contain" priority />
+          </Link>
+
+          <nav className="hidden items-center gap-7 md:flex">
+            {[
+              ['Sobre', 'sobre'],
+              ['Benefícios', 'beneficios'],
+              ['Comunidade', 'comunidade'],
+              ['Fundadoras', 'fundadoras'],
+            ].map(([label, id]) => (
+              <Link
+                key={id}
+                href={`#${id}`}
+                className="text-sm font-medium text-white/80 transition-colors hover:text-primary"
+                onClick={(e) => scrollToSection(e, id)}
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
-          <div className="flex items-center gap-3">
+
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               variant="outline"
-              className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
-              onClick={() => {
-                window.open(`${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/login`, '_blank');
-                window.close();
-              }}
+              className="h-10 border-white/15 bg-white/5 px-3 text-white hover:bg-white/10 sm:px-4"
+              onClick={() => window.open(`${process.env.NEXT_PUBLIC_SISTEMA_URL}/auth/login`, '_blank')}
             >
-              <LogIn />
-              Login
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">Login</span>
             </Button>
-            <DropdownMenu modal={false}>
-              <DropdownMenuTrigger asChild>
-                <Button className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]">
-                  Junte-se a nós
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56" sideOffset={5} avoidCollisions={true}>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    handleSignup(e, 'loveDecoration');
-                  }}
-                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
-                >
-                  <Heart className="w-4 h-4 mr-3 text-pink-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Eu amo decoração</span>
-                    <span className="text-xs text-muted-foreground">Para entusiastas</span>
-                  </div>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    handleSignup(e, 'professional');
-                  }}
-                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
-                >
-                  <Briefcase className="w-4 h-4 mr-3 text-blue-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Profissionais</span>
-                    <span className="text-xs text-muted-foreground">Arquitetos e designers</span>
-                  </div>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    handleSignup(e, 'partnerSupplier');
-                  }}
-                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
-                >
-                  <Handshake className="w-4 h-4 mr-3 text-green-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Lojista parceiro</span>
-                    <span className="text-xs text-muted-foreground">Empresas e lojas</span>
-                  </div>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    handleSignup(e, 'wellness');
-                  }}
-                  className="cursor-pointer py-3 px-4 hover:bg-primary/10 transition-colors"
-                >
-                  <CirclePlus className="w-4 h-4 mr-3 text-teal-500" />
-                  <div className="flex flex-col">
-                    <span className="font-medium">Wellness</span>
-                    <span className="text-xs text-muted-foreground">Bem-estar e saúde</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <SignupMenu label="Junte-se a nós" className="hidden h-10 px-4 text-sm sm:inline-flex" />
           </div>
         </div>
       </header>
 
       <main className="flex-1">
-        <section className="relative overflow-hidden">
-          <Carousel />
-          <div className="container pb-12 pt-4">
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto sm:mx-0">
-              {/* <Button
-                size="lg"
-                className="w-full sm:w-auto transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
-              >
-                Junte-se ao clube
-              </Button> */}
-              <Link
-                href="#fundadoras"
-                className="text-sm font-medium transition-colors hover:text-primary"
-                onClick={(e) => scrollToSection(e, 'sobre')}
-              >
+        <section id="inicio" className="relative min-h-[calc(100vh-80px)] py-12 md:py-20">
+          <div className="absolute inset-0">
+            <Image src="/conectando-profissionais.jpeg" alt="" fill className="object-cover opacity-35" priority />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background))_0%,hsl(var(--background)/0.9)_38%,hsl(var(--background)/0.35)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
+          </div>
+
+          <div className="container relative grid min-h-[calc(100vh-220px)] items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="max-w-3xl space-y-8">
+              <div className="inline-flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
+                <Sparkles className="h-4 w-4" />
+                Clube de negócios para arquitetura, decoração, design e bem-estar
+              </div>
+
+              <div className="space-y-5">
+                <h1 className="max-w-4xl text-4xl font-bold leading-tight text-balance sm:text-5xl lg:text-6xl">
+                  Conexões certas para transformar relacionamento em negócio.
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-white/78">
+                  O UP Connection aproxima profissionais, lojistas e marcas em uma comunidade com curadoria, presença e
+                  networking estratégico para gerar indicação, visibilidade e oportunidades reais.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <SignupMenu label="Quero fazer parte" />
                 <Button
+                  asChild
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto border-primary/30 bg-secondary/10 transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px]"
+                  className="h-12 border-white/15 bg-white/5 px-6 text-base hover:bg-white/10"
                 >
-                  Saiba mais
+                  <Link href="#beneficios" onClick={(e) => scrollToSection(e, 'beneficios')}>
+                    Ver benefícios
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
+              </div>
 
-        {/* About Section */}
-        <section id="sobre" className="py-20 bg-muted">
-          <div className="container">
-            <div className="grid gap-8 md:grid-cols-2 md:gap-12 items-center">
-              <div className="relative h-[400px] w-full rounded-lg overflow-hidden shadow-xl">
+              <div className="grid gap-3 pt-3 sm:grid-cols-3">
+                {metrics.map((item) => (
+                  <div key={item.label} className="border-l border-primary/40 bg-white/[0.04] px-4 py-3 backdrop-blur">
+                    <p className="text-2xl font-bold text-primary">{item.value}</p>
+                    <p className="mt-1 text-sm leading-5 text-white/70">{item.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative hidden lg:block">
+              <div className="relative ml-auto aspect-[4/5] max-w-[500px] overflow-hidden rounded-lg border border-white/10 shadow-2xl shadow-black/30">
                 <Image
-                  src="/equipe-unida-no-trabalho.jpg"
-                  alt="Reunião de profissionais"
+                  src="/fundadoras.jpeg"
+                  alt="Fundadoras do UP Connection"
                   fill
-                  className="object-cover"
+                  className="object-cover object-top"
                 />
-              </div>
-              <div className="space-y-6">
-                <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
-                  Sobre o UP
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                  <p className="text-sm font-medium text-primary">Curadoria de relacionamento</p>
+                  <p className="mt-2 max-w-sm text-lg font-semibold">
+                    Liderado por fundadoras com trajetória real no mercado de alto padrão.
+                  </p>
                 </div>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Uma comunidade forte e inspiradora</h2>
-                <p className="text-muted-foreground text-lg">
-                  O UP Connection nasceu da necessidade de criar um ambiente colaborativo e acolhedor, onde
-                  profissionais dos setores criativo e técnico pudessem se encontrar de forma autêntica, trocar
-                  experiências valiosas, compartilhar conhecimentos e desenvolver parcerias estratégicas que realmente
-                  façam a diferença.
-                </p>
-                <p className="text-muted-foreground text-lg">
-                  Nosso propósito é fomentar conexões genuínas e duradouras, que transcendam o networking tradicional e
-                  resultem em crescimento profissional sólido, fortalecimento da comunidade e no surgimento constante de
-                  novas oportunidades de negócio para todos os membros envolvidos.
-                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Values Section */}
-        <section id="valores" className="py-20">
+        <section id="sobre" className="py-20">
+          <div className="container grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+              <Image src="/equipe-unida-no-trabalho.jpg" alt="Profissionais em reunião" fill className="object-cover" />
+            </div>
+            <div className="space-y-6">
+              <div className="inline-flex rounded-md bg-primary/15 px-3 py-1 text-sm font-medium text-primary">
+                Por que o UP existe
+              </div>
+              <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
+                Networking bom não é quantidade. É contexto, confiança e continuidade.
+              </h2>
+              <p className="text-lg leading-8 text-muted-foreground">
+                Criamos um ambiente para aproximar profissionais que querem ser lembrados, indicados e reconhecidos. No
+                UP, cada encontro é pensado para facilitar troca de conhecimento, conexão qualificada e geração de
+                negócios entre pessoas que atuam em mercados complementares.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {['Curadoria de participantes', 'Relacionamento com propósito', 'Eventos e ativações presenciais', 'Ecossistema de indicação'].map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-white/85">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-muted/70 py-20">
           <div className="container">
-            <div className="text-center max-w-[800px] mx-auto mb-16 space-y-4">
-              <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
-                Valores que nos definem
-              </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Nossos Valores</h2>
-              <p className="text-muted-foreground text-lg">
-                Construímos nossa comunidade com base em princípios sólidos que guiam todas as nossas ações e
-                iniciativas.
-              </p>
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Para quem é</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Uma comunidade para quem influencia decisões.</h2>
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <Card className="bg-card/80 backdrop-blur">
-                <CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Users className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold">Conexão</h3>
-                  <p className="text-muted-foreground">
-                    Acreditamos no poder das conexões genuínas entre profissionais que compartilham valores e objetivos.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card/80 backdrop-blur">
-                <CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Lightbulb className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold">Colaboração</h3>
-                  <p className="text-muted-foreground">
-                    Promovemos um ambiente onde a troca de conhecimentos e a colaboração são incentivadas e valorizadas.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card/80 backdrop-blur">
-                <CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold">Crescimento</h3>
-                  <p className="text-muted-foreground">
-                    Buscamos constantemente o desenvolvimento profissional e pessoal de todos os nossos membros.
-                  </p>
-                </CardContent>
-              </Card>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {audiences.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Card key={item.title} className="border-white/10 bg-card/80">
+                    <CardContent className="p-6">
+                      <Icon className={`h-7 w-7 ${item.color}`} />
+                      <h3 className="mt-5 text-xl font-bold">{item.title}</h3>
+                      <p className="mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* Benefits Section */}
-        <section id="beneficios" className="py-20 bg-muted">
-          <div className="container ">
-            <div className="text-center max-w-[800px] mx-auto mb-16 space-y-4">
-              <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
-                Ser membro é ter mais
-              </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Benefícios para Membros</h2>
-              <p className="text-muted-foreground text-lg">
-                Fazer parte do UP Connection significa ter acesso a uma série de vantagens exclusivas.
-              </p>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-2">
-              <div className="">
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Networking Estratégico</h3>
-                    <p className="text-muted-foreground">
-                      Encontros regulares com profissionais qualificados do setor criativo e técnico.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Eventos Exclusivos</h3>
-                    <p className="text-muted-foreground">
-                      Acesso a workshops, palestras e eventos de capacitação com especialistas renomados.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Parcerias Estratégicas</h3>
-                    <p className="text-muted-foreground">
-                      Oportunidades de colaboração em projetos e indicações de negócios entre membros.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="">
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Visibilidade Profissional</h3>
-                    <p className="text-muted-foreground">
-                      Divulgação do seu trabalho e expertise para uma rede qualificada de contatos.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Mentoria e Desenvolvimento</h3>
-                    <p className="text-muted-foreground">
-                      Acesso a programas de mentoria com profissionais experientes do mercado.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 h-[120px]">
-                  <CheckCircle className="h-6 w-6 text-primary flex-shrink-0" />
-                  <div>
-                    <h3 className="text-xl font-bold">Comunidade Ativa</h3>
-                    <p className="text-muted-foreground">
-                      Participação em um grupo exclusivo de troca de experiências e conhecimentos.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials Section */}
-        <section id="depoimentos" className="py-20">
+        <section id="beneficios" className="py-20">
           <div className="container">
-            <div className="text-center max-w-[800px] mx-auto mb-16 space-y-4">
-              <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
-                Depoimentos de quem vive a experiência
+            <div className="mb-12 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-sm font-semibold uppercase tracking-widest text-primary">Benefícios</p>
+                <h2 className="mt-3 text-3xl font-bold sm:text-4xl">O que torna o UP mais forte que um grupo comum.</h2>
               </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">O que dizem nossos membros</h2>
-              <p className="text-muted-foreground text-lg">
-                Conheça as experiências de quem já faz parte da nossa comunidade e descubra como o UP Connection tem
-                contribuído para impulsionar conexões, aprendizados e novas oportunidades.
-              </p>
+              <SignupMenu label="Começar cadastro" />
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {testimonials.map((item, index) => (
-                <Card key={index}>
-                  <CardContent className="p-6 space-y-4">
-                    <p className="italic text-muted-foreground">"{item.text}"</p>
-
-                    <div className="flex items-center gap-4">
-                      {/* <div className="h-12 w-12 rounded-full overflow-hidden bg-muted">
-                        <Image
-                          src={item.image}
-                          alt={`Foto de ${item.name}`}
-                          width={48}
-                          height={48}
-                          className="object-cover"
-                        />
-                      </div> */}
-
-                      <div>
-                        <p className="font-bold">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">{item.role}</p>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {benefits.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Card key={item.title} className="border-white/10 bg-white/[0.04]">
+                    <CardContent className="p-6">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/15 text-primary">
+                        <Icon className="h-5 w-5" />
                       </div>
+                      <h3 className="mt-5 text-xl font-bold">{item.title}</h3>
+                      <p className="mt-3 leading-7 text-muted-foreground">{item.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="comunidade" className="bg-muted/70 py-20">
+          <div className="container grid gap-12 lg:grid-cols-2 lg:items-center">
+            <div className="space-y-6">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Como funciona</p>
+              <h2 className="text-3xl font-bold sm:text-4xl">Você entra pelo perfil certo e começa a se conectar.</h2>
+              <p className="text-lg leading-8 text-muted-foreground">
+                O caminho é simples: cadastro, curadoria e participação nas experiências da comunidade. O objetivo é
+                fazer você estar nos ambientes certos, com pessoas certas, no momento certo.
+              </p>
+              <div className="space-y-4">
+                {steps.map((item, index) => (
+                  <div key={item} className="flex items-center gap-4 border-b border-white/10 pb-4">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+                      {index + 1}
+                    </span>
+                    <p className="font-medium text-white/90">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-4">
+                <div className="rounded-lg border border-white/10 bg-card/80 p-6">
+                  <Zap className="h-7 w-7 text-primary" />
+                  <h3 className="mt-5 text-xl font-bold">Mais presença</h3>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    Sua marca circula em uma rede que valoriza reputação e indicação.
+                  </p>
+                </div>
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+                  <Image src="/networking-estrategico.jpg" alt="Evento de networking" fill className="object-cover" />
+                </div>
+              </div>
+              <div className="space-y-4 sm:pt-10">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+                  <Image src="/parcerias-inteligentes.jpeg" alt="Parcerias profissionais" fill className="object-cover" />
+                </div>
+                <div className="rounded-lg border border-white/10 bg-card/80 p-6">
+                  <ShieldCheck className="h-7 w-7 text-teal-300" />
+                  <h3 className="mt-5 text-xl font-bold">Mais confiança</h3>
+                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                    Relacionamentos crescem com recorrência, curadoria e experiências compartilhadas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-20">
+          <div className="container">
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Depoimentos</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Quem participa percebe a diferença.</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {testimonials.map((item) => (
+                <Card key={item.name} className="border-white/10 bg-white/[0.04]">
+                  <CardContent className="p-6">
+                    <div className="mb-5 flex gap-1 text-primary">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} className="h-4 w-4 fill-primary" />
+                      ))}
+                    </div>
+                    <p className="leading-7 text-white/82">"{item.text}"</p>
+                    <div className="mt-6 border-t border-white/10 pt-4">
+                      <p className="font-bold">{item.name}</p>
+                      <p className="text-sm text-muted-foreground">{item.role}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -445,194 +471,114 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Fundadoras Section */}
-        <section id="fundadoras" className="py-20 bg-muted">
+        <section id="fundadoras" className="bg-muted/70 py-20">
           <div className="container">
-            <div className="text-center max-w-[800px] mx-auto mb-16 space-y-4">
-              <div className="inline-block rounded-full bg-primary/20 px-3 py-1 text-sm text-primary font-medium">
-                Nossas Fundadoras
-              </div>
-
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                Conheça quem está por trás do UP Club
-              </h2>
-
-              <p className="text-muted-foreground text-lg">
-                Duas profissionais que uniram experiência, visão estratégica e networking
-                para criar uma comunidade forte no mercado de arquitetura e design.
+            <div className="mx-auto mb-12 max-w-3xl text-center">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Fundadoras</p>
+              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Experiência de mercado por trás da comunidade.</h2>
+              <p className="mt-4 text-lg leading-8 text-muted-foreground">
+                Rosangela Ferraz e Meire Ferraz unem arquitetura, relações públicas e networking para criar conexões de
+                valor no mercado de arquitetura, design, decoração e lifestyle.
               </p>
             </div>
 
-            {/* IMAGEM ÚNICA DAS DUAS */}
-            <div className="w-full max-w-[700px] mx-auto mb-12">
-              <Image
-                src="/fundadoras.jpeg"
-                alt="Rosangela e Meire Ferraz - Fundadoras do UP Club"
-                width={800}
-                height={1200} // coloca proporção real da imagem (importante!)
-                className="w-full h-auto object-contain rounded-xl"
-                priority
-              />
-            </div>
-
-            {/* TEXTOS */}
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* Rosangela */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-2xl font-bold">Rosangela Ferraz</h3>
-                  <p className="text-primary font-medium">
-                    Co-fundadora & Arquiteta de Interiores
-                  </p>
-                </div>
-
-                <p className="text-muted-foreground">
-                  Rosangela Ferraz é uma profissional de destaque no mercado de design de
-                  interiores em São Paulo, com uma atuação que integra criação,
-                  relacionamento e estratégia.
-                </p>
-
-                <p className="text-muted-foreground">
-                  Pós-graduada pela FAAP em Design de Interiores, é fundadora do escritório
-                  Rosangela Ferraz Interior Design e idealizadora da UP Connection, grupo
-                  voltado à conexão entre arquitetos, designers e lojistas.
-                </p>
-
-                <p className="text-muted-foreground">
-                  Também atua como Relações Públicas no segmento de decoração e arquitetura,
-                  promovendo parcerias estratégicas no mercado de alto padrão.
-                </p>
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-lg border border-white/10">
+                <Image src="/fundadoras.jpeg" alt="Rosangela e Meire Ferraz" fill className="object-cover object-top" />
               </div>
 
-              {/* Meire */}
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-2xl font-bold">Meire Ferraz</h3>
-                  <p className="text-primary font-medium">
-                    Co-fundadora & Relações Públicas
+              <div className="grid gap-4 md:grid-cols-2">
+                {[
+                  {
+                    name: 'Rosangela Ferraz',
+                    role: 'Co-fundadora & Arquiteta de Interiores',
+                    text: 'Pós-graduada pela FAAP em Design de Interiores, atua integrando criação, relacionamento e estratégia no mercado de alto padrão.',
+                  },
+                  {
+                    name: 'Meire Ferraz',
+                    role: 'Co-fundadora & Relações Públicas',
+                    text: 'Especialista em relacionamento estratégico, conecta lojistas, profissionais e marcas por meio de ações, visitas e eventos.',
+                  },
+                ].map((founder) => (
+                  <Card key={founder.name} className="border-white/10 bg-card/80">
+                    <CardContent className="p-6">
+                      <h3 className="text-2xl font-bold">{founder.name}</h3>
+                      <p className="mt-2 font-medium text-primary">{founder.role}</p>
+                      <p className="mt-5 leading-7 text-muted-foreground">{founder.text}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+                <div className="rounded-lg border border-primary/25 bg-primary/10 p-6 md:col-span-2">
+                  <p className="text-lg leading-8 text-white/86">
+                    A força do UP está na combinação entre curadoria humana, experiência de mercado e uma comunidade
+                    desenhada para transformar contatos em relações de valor.
                   </p>
                 </div>
-
-                <p className="text-muted-foreground">
-                  Formada em Publicidade e Propaganda, Meire Ferraz é especialista em
-                  relacionamento estratégico no mercado de decoração e design.
-                </p>
-
-                <p className="text-muted-foreground">
-                  Atua conectando lojistas e profissionais por meio de ações, visitas e
-                  eventos que fortalecem parcerias e geram novas oportunidades de negócio.
-                </p>
-
-                <p className="text-muted-foreground">
-                  Sua atuação contribui diretamente para posicionar a UP Connection como
-                  referência em conexões qualificadas e experiências de alto nível.
-                </p>
               </div>
-            </div>
-
-            {/* TEXTO FINAL */}
-            <div className="mt-12 text-center">
-              <p className="text-lg max-w-[800px] mx-auto text-muted-foreground">
-                Juntas, somam mais de 25 anos de experiência no setor. O UP Club nasce
-                com o propósito de conectar profissionais, fortalecer relações e criar
-                oportunidades reais de crescimento no mercado de arquitetura e design.
-              </p>
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-20 container">
-          <div className="rounded-xl bg-muted p-8 md:p-12 lg:p-16 text-center max-w-[900px] mx-auto space-y-6 shadow-lg">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Pronto para impulsionar sua carreira?</h2>
-            <p className="text-lg text-muted-foreground max-w-[600px] mx-auto">
-              Junte-se ao UP - Club de Negócios e faça parte de uma comunidade que valoriza conexão, colaboração e
-              crescimento profissional.
-            </p>
+        <section className="py-20">
+          <div className="container">
+            <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[linear-gradient(135deg,hsl(var(--primary)/0.22),hsl(var(--secondary)/0.18),hsl(var(--background)))] p-8 md:p-12 lg:p-16">
+              <div className="max-w-3xl space-y-6">
+                <p className="inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-primary">
+                  <MessageCircle className="h-4 w-4" />
+                  Entre para a comunidade
+                </p>
+                <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
+                  O próximo contato certo pode mudar o ritmo do seu negócio.
+                </h2>
+                <p className="text-lg leading-8 text-white/75">
+                  Cadastre-se no perfil ideal e comece a participar de uma rede construída para gerar reputação,
+                  parcerias e oportunidades.
+                </p>
+                <SignupMenu label="Escolher meu perfil" />
+              </div>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t py-12 bg-card/50">
-        <div className="container grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <footer className="border-t border-white/10 bg-card/50 py-12">
+        <div className="container grid gap-8 md:grid-cols-3">
           <div className="space-y-4">
-            <h3 className="font-bold">Links Rápidos</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="#sobre"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  onClick={(e) => scrollToSection(e, 'sobre')}
-                >
-                  Sobre
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#valores"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  onClick={(e) => scrollToSection(e, 'valores')}
-                >
-                  Valores
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#beneficios"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  onClick={(e) => scrollToSection(e, 'beneficios')}
-                >
-                  Benefícios
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#depoimentos"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  onClick={(e) => scrollToSection(e, 'depoimentos')}
-                >
-                  Depoimentos
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#fundadoras"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                  onClick={(e) => scrollToSection(e, 'fundadoras')}
-                >
-                  Fundadoras
-                </Link>
-              </li>
-            </ul>
+            <div className="relative h-16 w-24">
+              <Image src="/logo-up-completa.svg" alt="UP Connection" fill className="object-contain" />
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+              Clube de negócios para conexões estratégicas em arquitetura, decoração, design e wellness.
+            </p>
           </div>
 
           <div className="space-y-4">
             <h3 className="font-bold">Contato</h3>
-            <ul className="space-y-2">
-              <li className="text-muted-foreground">upconnection01@gmail.com</li>
-              <li className="text-muted-foreground">+55 (11) 96454-0818</li>
-              <li className="text-muted-foreground">São Paulo, SP - Brasil</li>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li>upconnection01@gmail.com</li>
+              <li>+55 (11) 96454-0818</li>
+              <li className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                São Paulo, SP - Brasil
+              </li>
             </ul>
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-bold">Redes Sociais</h3>
-            <p className="text-muted-foreground">Siga-nos e fique por dentro de todas as novidades!</p>
-            <div className="flex gap-4">
-              <a
-                href="https://instagram.com/updesigners_e_arquitetos"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10
-               text-white hover:shadow-lg transition-all duration-300 hover:scale-110"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-            </div>
+            <h3 className="font-bold">Redes sociais</h3>
+            <p className="text-sm text-muted-foreground">Acompanhe novidades, eventos e conexões da comunidade.</p>
+            <a
+              href="https://instagram.com/updesigners_e_arquitetos"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary/15 text-primary transition hover:bg-primary hover:text-primary-foreground"
+            >
+              <Instagram className="h-5 w-5" />
+            </a>
           </div>
         </div>
 
-        <div className="container mt-8 pt-8 border-t border-border/50">
+        <div className="container mt-8 border-t border-white/10 pt-8">
           <p className="text-center text-sm text-muted-foreground">
             © {new Date().getFullYear()} UP Connection. Todos os direitos reservados.
           </p>
