@@ -2,13 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .layout-safe {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .text-safe {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .no-translate {
@@ -76,6 +83,10 @@ body {
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
+  overflow-x: clip;
+  min-height: 100%;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
 }
 
 @layer base {
@@ -83,6 +94,10 @@ html {
     @apply border-border;
   }
   body {
+    min-height: 100dvh;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     @apply bg-background text-foreground;
   }
 }
