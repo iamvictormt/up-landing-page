@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { FloatingBees, HoneycombBackdrop } from '@/components/bees';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -212,8 +213,9 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="flex min-h-screen flex-col overflow-x-clip bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-background/90 backdrop-blur-xl">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip bg-background text-foreground">
+      <HoneycombBackdrop />
+      <header className="relative z-40 sticky top-0 border-b border-white/10 bg-background/90 backdrop-blur-xl">
         <div className="container flex min-h-20 min-w-0 flex-wrap items-center justify-between gap-3 py-3">
           <Link
             href="#inicio"
@@ -258,7 +260,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main className="relative z-10 flex-1">
         <section id="inicio" className="relative min-h-[calc(100vh-80px)] py-12 md:py-20">
           <div className="absolute inset-0">
             <Image src="/conectando-profissionais.jpeg" alt="" fill className="object-cover opacity-35" priority />
@@ -266,7 +268,9 @@ export default function LandingPage() {
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
           </div>
 
-          <div className="container relative grid min-h-[calc(100vh-220px)] min-w-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <FloatingBees count={7} seed={11} className="z-20" />
+
+          <div className="container relative z-10 grid min-h-[calc(100vh-220px)] min-w-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="layout-safe max-w-3xl space-y-8">
               <div className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-medium text-primary">
                 <Sparkles className="h-4 w-4 shrink-0" />
@@ -332,8 +336,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="sobre" className="py-20">
-          <div className="container grid min-w-0 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <section id="sobre" className="relative overflow-hidden py-20">
+          <FloatingBees count={4} seed={5} />
+          <div className="container relative z-10 grid min-w-0 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
             <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
               <Image src="/equipe-unida-no-trabalho.jpg" alt="Profissionais em reunião" fill className="object-cover" />
             </div>
@@ -361,8 +366,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="bg-muted/70 py-20">
-          <div className="container">
+        <section className="relative overflow-hidden bg-muted/70 py-20">
+          <FloatingBees count={5} seed={23} />
+          <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-widest text-primary">Para quem é</p>
               <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">
@@ -387,8 +393,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="beneficios" className="py-20">
-          <div className="container">
+        <section id="beneficios" className="relative overflow-hidden py-20">
+          <FloatingBees count={5} seed={67} />
+          <div className="container relative z-10">
             <div className="mb-12 flex min-w-0 flex-col gap-5 md:flex-row md:flex-wrap md:items-end md:justify-between">
               <div className="layout-safe max-w-2xl">
                 <p className="text-sm font-semibold uppercase tracking-widest text-primary">Benefícios</p>
@@ -418,8 +425,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="comunidade" className="bg-muted/70 py-20">
-          <div className="container grid min-w-0 gap-12 lg:grid-cols-2 lg:items-center">
+        <section id="comunidade" className="relative overflow-hidden bg-muted/70 py-20">
+          <FloatingBees count={5} seed={88} />
+          <div className="container relative z-10 grid min-w-0 gap-12 lg:grid-cols-2 lg:items-center">
             <div className="layout-safe space-y-6">
               <p className="text-sm font-semibold uppercase tracking-widest text-primary">Como funciona</p>
               <h2 className="text-safe text-3xl font-bold sm:text-4xl">
@@ -470,8 +478,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="container">
+        <section className="relative overflow-hidden py-20">
+          <FloatingBees count={4} seed={104} />
+          <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-widest text-primary">Depoimentos</p>
               <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">Quem participa percebe a diferença.</h2>
@@ -497,8 +506,9 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <section id="fundadoras" className="bg-muted/70 py-20">
-          <div className="container">
+        <section id="fundadoras" className="relative overflow-hidden bg-muted/70 py-20">
+          <FloatingBees count={5} seed={129} />
+          <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-widest text-primary">Fundadoras</p>
               <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">
@@ -550,7 +560,8 @@ export default function LandingPage() {
         <section className="py-20">
           <div className="container">
             <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[linear-gradient(135deg,hsl(var(--primary)/0.22),hsl(var(--secondary)/0.18),hsl(var(--background)))] p-8 md:p-12 lg:p-16">
-              <div className="layout-safe max-w-3xl space-y-6">
+              <FloatingBees count={6} seed={42} />
+              <div className="layout-safe relative z-10 max-w-3xl space-y-6">
                 <p className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-primary">
                   <MessageCircle className="h-4 w-4 shrink-0" />
                   <span className="text-safe">Entre para a comunidade</span>
