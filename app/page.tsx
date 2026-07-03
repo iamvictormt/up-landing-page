@@ -35,6 +35,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+
 /** Rótulo editorial de seção: filete dourado + versalete espaçado. */
 function SectionLabel({ children, centered = false }: { children: React.ReactNode; centered?: boolean }) {
   return (
