@@ -1,13 +1,14 @@
 'use client';
 
+import Image from 'next/image';
 import type { CSSProperties } from 'react';
 
 /**
- * Abelhas decorativas do UP Connection — a abelha é o mascote da marca.
+ * Abelhas decorativas do UP Connection — usa a mesma arte da abelha do
+ * up-dashboard (logo-abelha.png) para manter a identidade visual da marca.
  * Cada abelha ganha uma trajetória de voo única, gerada de forma
  * pseudoaleatória mas determinística (mesma semente => mesmo resultado no
  * servidor e no cliente, evitando erros de hidratação do Next).
- * As cores acompanham a paleta da marca (dourado/mel sobre vinho).
  */
 
 type BeeProps = {
@@ -20,54 +21,15 @@ type BeeProps = {
 
 function Bee({ size = 56, className = '', style, flip = false }: BeeProps) {
   return (
-    <svg
-      viewBox="0 0 120 84"
+    <Image
+      src="/logo-abelha.png"
+      alt=""
       width={size}
-      height={(size * 84) / 120}
+      height={Math.round((size * 389) / 503)}
       className={`up-bee ${className}`}
       style={{ ...style, transform: `${flip ? 'scaleX(-1) ' : ''}${style?.transform ?? ''}` }}
       aria-hidden="true"
-      focusable="false"
-    >
-      <defs>
-        <radialGradient id="beeBody" cx="35%" cy="30%" r="80%">
-          <stop offset="0%" stopColor="hsl(45 96% 72%)" />
-          <stop offset="55%" stopColor="hsl(38 92% 58%)" />
-          <stop offset="100%" stopColor="hsl(32 80% 46%)" />
-        </radialGradient>
-        <linearGradient id="beeWing" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(45 100% 96%)" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="hsl(40 90% 78%)" stopOpacity="0.45" />
-        </linearGradient>
-      </defs>
-
-      {/* Asas (batem com animação) */}
-      <g className="up-bee__wings" style={{ transformOrigin: '54px 30px' }}>
-        <ellipse cx="44" cy="22" rx="26" ry="15" fill="url(#beeWing)" stroke="hsl(40 60% 70%)" strokeWidth="1" />
-        <ellipse cx="66" cy="20" rx="22" ry="12" fill="url(#beeWing)" stroke="hsl(40 60% 70%)" strokeWidth="1" opacity="0.9" />
-      </g>
-
-      {/* Corpo / abdômen */}
-      <g>
-        <ellipse cx="62" cy="50" rx="42" ry="26" fill="url(#beeBody)" stroke="hsl(28 70% 38%)" strokeWidth="2" />
-        <path d="M58 26 q12 24 0 48" fill="none" stroke="hsl(330 45% 15%)" strokeWidth="7" strokeLinecap="round" opacity="0.92" />
-        <path d="M78 30 q10 20 0 40" fill="none" stroke="hsl(330 45% 15%)" strokeWidth="7" strokeLinecap="round" opacity="0.92" />
-        <path d="M96 38 q4 12 0 24" fill="none" stroke="hsl(330 45% 15%)" strokeWidth="6" strokeLinecap="round" opacity="0.85" />
-        <path d="M104 50 l14 -3 l-14 8 z" fill="hsl(28 70% 38%)" />
-      </g>
-
-      {/* Cabeça */}
-      <circle cx="26" cy="50" r="16" fill="hsl(330 45% 14%)" />
-      <circle cx="22" cy="46" r="4.2" fill="hsl(45 100% 92%)" />
-      <circle cx="23" cy="47" r="2" fill="hsl(330 45% 12%)" />
-      {/* Antenas */}
-      <g stroke="hsl(330 45% 14%)" strokeWidth="2.4" strokeLinecap="round" fill="none">
-        <path d="M18 38 q-8 -12 -16 -12" />
-        <path d="M26 34 q-2 -14 6 -20" />
-      </g>
-      <circle cx="2" cy="26" r="3" fill="hsl(38 92% 58%)" />
-      <circle cx="32" cy="14" r="3" fill="hsl(38 92% 58%)" />
-    </svg>
+    />
   );
 }
 
@@ -111,26 +73,28 @@ export function FloatingBees({
 
   const [xMin, xMax] = area?.xRange ?? [2, 92];
   const [yMin, yMax] = area?.yRange ?? [4, 88];
-  const [sMin, sMax] = area?.sizeRange ?? [24, 56];
+  const [sMin, sMax] = area?.sizeRange ?? [24, 36];
 
+  // Movimento de "pairar" — mesmos limites do loading do up-dashboard:
+  // deslocamentos curtos (±34px), rotações leves (±8°), ciclos de 2–3.5s.
   const bees = Array.from({ length: count }, () => ({
     left: r(xMin, xMax),
     top: r(yMin, yMax),
     size: r(sMin, sMax),
+    opacity: r(0.55, 0.85),
     flip: rand() > 0.5,
-    duration: r(15, 30),
-    delay: -r(0, 26),
-    flutter: r(0.14, 0.22),
-    x1: r(-90, 90),
-    y1: r(-72, 72),
-    x2: r(-90, 90),
-    y2: r(-72, 72),
-    x3: r(-90, 90),
-    y3: r(-72, 72),
+    duration: r(2.2, 3.4),
+    delay: -r(0, 3),
+    x1: r(-20, 20),
+    y1: r(-12, 12),
+    x2: r(-34, 34),
+    y2: r(-10, 10),
+    x3: r(-16, 16),
+    y3: r(6, 18),
     r0: r(-8, 8),
-    r1: r(-12, 12),
-    r2: r(-12, 12),
-    r3: r(-12, 12),
+    r1: r(-6, 6),
+    r2: r(-8, 8),
+    r3: r(-6, 6),
   }));
 
   return (
@@ -144,9 +108,9 @@ export function FloatingBees({
               position: 'absolute',
               left: `${bee.left}%`,
               top: `${bee.top}%`,
+              opacity: bee.opacity,
               animationDuration: `${bee.duration}s`,
               animationDelay: `${bee.delay}s`,
-              '--flutter': `${bee.flutter}s`,
               '--x1': `${bee.x1}px`,
               '--y1': `${bee.y1}px`,
               '--x2': `${bee.x2}px`,

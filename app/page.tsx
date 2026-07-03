@@ -22,13 +22,11 @@ import {
   Network,
   ShieldCheck,
   Sparkles,
-  Star,
   TrendingUp,
   Users,
   Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { FloatingBees, HoneycombBackdrop } from '@/components/bees';
 import {
   DropdownMenu,
@@ -36,6 +34,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+/** Rótulo editorial de seção: filete dourado + versalete espaçado. */
+function SectionLabel({ children, centered = false }: { children: React.ReactNode; centered?: boolean }) {
+  return (
+    <p
+      className={`flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-primary ${
+        centered ? 'justify-center' : ''
+      }`}
+    >
+      <span className="h-px w-10 shrink-0 bg-primary/60" />
+      <span className="text-safe">{children}</span>
+      {centered && <span className="h-px w-10 shrink-0 bg-primary/60" />}
+    </p>
+  );
+}
 
 export default function LandingPage() {
   const signupUrls = {
@@ -268,7 +281,7 @@ export default function LandingPage() {
             <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
           </div>
 
-          <FloatingBees count={7} seed={11} className="z-20" />
+          <FloatingBees count={3} seed={11} />
 
           <div className="container relative z-10 grid min-h-[calc(100vh-220px)] min-w-0 items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="layout-safe max-w-3xl space-y-8">
@@ -280,8 +293,8 @@ export default function LandingPage() {
               </div>
 
               <div className="layout-safe space-y-5">
-                <h1 className="text-safe max-w-4xl text-4xl font-bold leading-tight text-balance sm:text-5xl lg:text-6xl">
-                  Conexões certas para transformar relacionamento em negócio.
+                <h1 className="text-safe max-w-4xl font-serif text-4xl font-medium leading-[1.12] text-balance sm:text-5xl lg:text-6xl">
+                  Conexões certas para transformar <em className="italic text-primary">relacionamento</em> em negócio.
                 </h1>
                 <p className="text-safe max-w-2xl text-lg leading-8 text-white/78">
                   O UP Connection aproxima profissionais, lojistas e marcas em uma comunidade com curadoria, presença e
@@ -306,11 +319,8 @@ export default function LandingPage() {
 
               <div className="grid gap-3 pt-3 sm:grid-cols-2 lg:grid-cols-3">
                 {metrics.map((item) => (
-                  <div
-                    key={item.label}
-                    className="layout-safe min-w-0 border-l border-primary/40 bg-white/[0.04] px-4 py-3 backdrop-blur"
-                  >
-                    <p className="text-2xl font-bold text-primary">{item.value}</p>
+                  <div key={item.label} className="layout-safe min-w-0 border-l border-primary/40 py-1 pl-4">
+                    <p className="font-serif text-4xl font-medium text-primary">{item.value}</p>
                     <p className="text-safe mt-1 text-sm leading-5 text-white/70">{item.label}</p>
                   </div>
                 ))}
@@ -318,7 +328,7 @@ export default function LandingPage() {
             </div>
 
             <div className="relative hidden lg:block">
-              <div className="relative ml-auto aspect-[4/5] max-w-[500px] overflow-hidden rounded-lg border border-white/10 shadow-2xl shadow-black/30">
+              <div className="relative ml-auto aspect-[4/5] max-w-[500px] overflow-hidden rounded-sm shadow-2xl shadow-black/30">
                 <Image
                   src="/fundadoras.jpeg"
                   alt="Fundadoras do UP Connection"
@@ -337,16 +347,14 @@ export default function LandingPage() {
         </section>
 
         <section id="sobre" className="relative overflow-hidden py-20">
-          <FloatingBees count={4} seed={5} />
+          <FloatingBees count={2} seed={5} />
           <div className="container relative z-10 grid min-w-0 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
               <Image src="/equipe-unida-no-trabalho.jpg" alt="Profissionais em reunião" fill className="object-cover" />
             </div>
             <div className="layout-safe space-y-6">
-              <div className="inline-flex max-w-full flex-wrap rounded-md bg-primary/15 px-3 py-1 text-sm font-medium text-primary">
-                Por que o UP existe
-              </div>
-              <h2 className="text-safe text-3xl font-bold leading-tight sm:text-4xl">
+              <SectionLabel>Por que o UP existe</SectionLabel>
+              <h2 className="text-safe font-serif text-3xl font-medium leading-tight sm:text-4xl">
                 Networking bom não é quantidade. É contexto, confiança e continuidade.
               </h2>
               <p className="text-safe text-lg leading-8 text-muted-foreground">
@@ -367,26 +375,23 @@ export default function LandingPage() {
         </section>
 
         <section className="relative overflow-hidden bg-muted/70 py-20">
-          <FloatingBees count={5} seed={23} />
           <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Para quem é</p>
-              <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">
+              <SectionLabel centered>Para quem é</SectionLabel>
+              <h2 className="text-safe mt-4 font-serif text-3xl font-medium sm:text-4xl">
                 Uma comunidade para quem influencia decisões.
               </h2>
             </div>
 
-            <div className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid min-w-0 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
               {audiences.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="layout-safe min-w-0 border-white/10 bg-card/80">
-                    <CardContent className="p-6">
-                      <Icon className={`h-7 w-7 ${item.color}`} />
-                      <h3 className="text-safe mt-5 text-xl font-bold">{item.title}</h3>
-                      <p className="text-safe mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
-                    </CardContent>
-                  </Card>
+                  <div key={item.title} className="layout-safe min-w-0 border-t border-white/20 pt-6">
+                    <Icon className={`h-5 w-5 ${item.color}`} />
+                    <h3 className="text-safe mt-5 font-serif text-2xl font-medium">{item.title}</h3>
+                    <p className="text-safe mt-3 text-sm leading-6 text-muted-foreground">{item.description}</p>
+                  </div>
                 );
               })}
             </div>
@@ -394,31 +399,26 @@ export default function LandingPage() {
         </section>
 
         <section id="beneficios" className="relative overflow-hidden py-20">
-          <FloatingBees count={5} seed={67} />
           <div className="container relative z-10">
             <div className="mb-12 flex min-w-0 flex-col gap-5 md:flex-row md:flex-wrap md:items-end md:justify-between">
               <div className="layout-safe max-w-2xl">
-                <p className="text-sm font-semibold uppercase tracking-widest text-primary">Benefícios</p>
-                <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">
+                <SectionLabel>Benefícios</SectionLabel>
+                <h2 className="text-safe mt-4 font-serif text-3xl font-medium sm:text-4xl">
                   O que torna o UP mais forte que um grupo comum.
                 </h2>
               </div>
               <SignupMenu label="Começar cadastro" className="w-full md:w-auto" />
             </div>
 
-            <div className="grid min-w-0 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid min-w-0 gap-x-8 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
               {benefits.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Card key={item.title} className="layout-safe min-w-0 border-white/10 bg-white/[0.04]">
-                    <CardContent className="p-6">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/15 text-primary">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <h3 className="text-safe mt-5 text-xl font-bold">{item.title}</h3>
-                      <p className="text-safe mt-3 leading-7 text-muted-foreground">{item.description}</p>
-                    </CardContent>
-                  </Card>
+                  <div key={item.title} className="layout-safe min-w-0 border-t border-white/20 pt-6">
+                    <Icon className="h-5 w-5 text-primary" />
+                    <h3 className="text-safe mt-5 font-serif text-2xl font-medium">{item.title}</h3>
+                    <p className="text-safe mt-3 leading-7 text-muted-foreground">{item.description}</p>
+                  </div>
                 );
               })}
             </div>
@@ -426,11 +426,10 @@ export default function LandingPage() {
         </section>
 
         <section id="comunidade" className="relative overflow-hidden bg-muted/70 py-20">
-          <FloatingBees count={5} seed={88} />
           <div className="container relative z-10 grid min-w-0 gap-12 lg:grid-cols-2 lg:items-center">
             <div className="layout-safe space-y-6">
-              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Como funciona</p>
-              <h2 className="text-safe text-3xl font-bold sm:text-4xl">
+              <SectionLabel>Como funciona</SectionLabel>
+              <h2 className="text-safe font-serif text-3xl font-medium sm:text-4xl">
                 Você entra pelo perfil certo e começa a se conectar.
               </h2>
               <p className="text-safe text-lg leading-8 text-muted-foreground">
@@ -439,9 +438,9 @@ export default function LandingPage() {
               </p>
               <div className="space-y-4">
                 {steps.map((item, index) => (
-                  <div key={item} className="layout-safe flex min-w-0 items-start gap-4 border-b border-white/10 pb-4">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
-                      {index + 1}
+                  <div key={item} className="layout-safe flex min-w-0 items-baseline gap-5 border-b border-white/10 pb-4">
+                    <span className="w-9 shrink-0 font-serif text-3xl font-medium leading-none text-primary/70">
+                      {String(index + 1).padStart(2, '0')}
                     </span>
                     <p className="text-safe font-medium text-white/90">{item}</p>
                   </div>
@@ -452,23 +451,23 @@ export default function LandingPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-4">
                 <div className="layout-safe rounded-lg border border-white/10 bg-card/80 p-6">
-                  <Zap className="h-7 w-7 text-primary" />
-                  <h3 className="text-safe mt-5 text-xl font-bold">Mais presença</h3>
+                  <Zap className="h-5 w-5 text-primary" />
+                  <h3 className="text-safe mt-5 font-serif text-2xl font-medium">Mais presença</h3>
                   <p className="text-safe mt-3 text-sm leading-6 text-muted-foreground">
                     Sua marca circula em uma rede que valoriza reputação e indicação.
                   </p>
                 </div>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
                   <Image src="/networking-estrategico.jpg" alt="Evento de networking" fill className="object-cover" />
                 </div>
               </div>
               <div className="space-y-4 sm:pt-10">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-white/10">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
                   <Image src="/parcerias-inteligentes.jpeg" alt="Parcerias profissionais" fill className="object-cover" />
                 </div>
                 <div className="layout-safe rounded-lg border border-white/10 bg-card/80 p-6">
-                  <ShieldCheck className="h-7 w-7 text-teal-300" />
-                  <h3 className="text-safe mt-5 text-xl font-bold">Mais confiança</h3>
+                  <ShieldCheck className="h-5 w-5 text-teal-300" />
+                  <h3 className="text-safe mt-5 font-serif text-2xl font-medium">Mais confiança</h3>
                   <p className="text-safe mt-3 text-sm leading-6 text-muted-foreground">
                     Relacionamentos crescem com recorrência, curadoria e experiências compartilhadas.
                   </p>
@@ -479,39 +478,37 @@ export default function LandingPage() {
         </section>
 
         <section className="relative overflow-hidden py-20">
-          <FloatingBees count={4} seed={104} />
           <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Depoimentos</p>
-              <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">Quem participa percebe a diferença.</h2>
+              <SectionLabel centered>Depoimentos</SectionLabel>
+              <h2 className="text-safe mt-4 font-serif text-3xl font-medium sm:text-4xl">
+                Quem participa percebe a diferença.
+              </h2>
             </div>
-            <div className="grid min-w-0 gap-4 md:grid-cols-3">
+            <div className="grid min-w-0 gap-x-8 gap-y-10 md:grid-cols-3">
               {testimonials.map((item) => (
-                <Card key={item.name} className="layout-safe min-w-0 border-white/10 bg-white/[0.04]">
-                  <CardContent className="p-6">
-                    <div className="mb-5 flex gap-1 text-primary">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star key={star} className="h-4 w-4 fill-primary" />
-                      ))}
-                    </div>
-                    <p className="text-safe leading-7 text-white/82">"{item.text}"</p>
-                    <div className="mt-6 border-t border-white/10 pt-4">
-                      <p className="text-safe font-bold">{item.name}</p>
-                      <p className="text-safe text-sm text-muted-foreground">{item.role}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <figure key={item.name} className="layout-safe min-w-0 border-t border-white/20 pt-6">
+                  <span aria-hidden="true" className="block font-serif text-6xl leading-none text-primary/50">
+                    “
+                  </span>
+                  <blockquote className="text-safe mt-2 font-serif text-lg italic leading-8 text-white/85">
+                    {item.text}
+                  </blockquote>
+                  <figcaption className="mt-6">
+                    <p className="text-safe font-semibold">{item.name}</p>
+                    <p className="text-safe mt-1 text-sm text-muted-foreground">{item.role}</p>
+                  </figcaption>
+                </figure>
               ))}
             </div>
           </div>
         </section>
 
         <section id="fundadoras" className="relative overflow-hidden bg-muted/70 py-20">
-          <FloatingBees count={5} seed={129} />
           <div className="container relative z-10">
             <div className="layout-safe mx-auto mb-12 max-w-3xl text-center">
-              <p className="text-sm font-semibold uppercase tracking-widest text-primary">Fundadoras</p>
-              <h2 className="text-safe mt-3 text-3xl font-bold sm:text-4xl">
+              <SectionLabel centered>Fundadoras</SectionLabel>
+              <h2 className="text-safe mt-4 font-serif text-3xl font-medium sm:text-4xl">
                 Experiência de mercado por trás da comunidade.
               </h2>
               <p className="text-safe mt-4 text-lg leading-8 text-muted-foreground">
@@ -521,7 +518,7 @@ export default function LandingPage() {
             </div>
 
             <div className="grid min-w-0 gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-lg border border-white/10">
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-sm">
                 <Image src="/fundadoras.jpeg" alt="Rosangela e Meire Ferraz" fill className="object-cover object-top" />
               </div>
 
@@ -538,16 +535,16 @@ export default function LandingPage() {
                     text: 'Pós-graduada pela FAAP em Design de Interiores, atua integrando criação, relacionamento e estratégia no mercado de alto padrão.',
                   },
                 ].map((founder) => (
-                  <Card key={founder.name} className="layout-safe min-w-0 border-white/10 bg-card/80">
-                    <CardContent className="p-6">
-                      <h3 className="text-safe text-2xl font-bold">{founder.name}</h3>
-                      <p className="text-safe mt-2 font-medium text-primary">{founder.role}</p>
-                      <p className="text-safe mt-5 leading-7 text-muted-foreground">{founder.text}</p>
-                    </CardContent>
-                  </Card>
+                  <div key={founder.name} className="layout-safe min-w-0 border-t border-white/20 pt-6">
+                    <h3 className="text-safe font-serif text-2xl font-medium">{founder.name}</h3>
+                    <p className="text-safe mt-2 text-sm font-medium uppercase tracking-widest text-primary">
+                      {founder.role}
+                    </p>
+                    <p className="text-safe mt-5 leading-7 text-muted-foreground">{founder.text}</p>
+                  </div>
                 ))}
-                <div className="layout-safe rounded-lg border border-primary/25 bg-primary/10 p-6 md:col-span-2">
-                  <p className="text-safe text-lg leading-8 text-white/86">
+                <div className="layout-safe border-l-2 border-primary/60 pl-6 md:col-span-2">
+                  <p className="text-safe font-serif text-lg italic leading-8 text-white/86">
                     A força do UP está na combinação entre curadoria humana, experiência de mercado e uma comunidade
                     desenhada para transformar contatos em relações de valor.
                   </p>
@@ -560,14 +557,14 @@ export default function LandingPage() {
         <section className="py-20">
           <div className="container">
             <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[linear-gradient(135deg,hsl(var(--primary)/0.22),hsl(var(--secondary)/0.18),hsl(var(--background)))] p-8 md:p-12 lg:p-16">
-              <FloatingBees count={6} seed={42} />
+              <FloatingBees count={2} seed={42} />
               <div className="layout-safe relative z-10 max-w-3xl space-y-6">
                 <p className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-medium text-primary">
                   <MessageCircle className="h-4 w-4 shrink-0" />
                   <span className="text-safe">Entre para a comunidade</span>
                 </p>
-                <h2 className="text-safe text-3xl font-bold leading-tight sm:text-4xl">
-                  O próximo contato certo pode mudar o ritmo do seu negócio.
+                <h2 className="text-safe font-serif text-3xl font-medium leading-tight sm:text-4xl">
+                  O próximo contato certo pode mudar o <em className="italic text-primary">ritmo</em> do seu negócio.
                 </h2>
                 <p className="text-safe text-lg leading-8 text-white/75">
                   Cadastre-se no perfil ideal e comece a participar de uma rede construída para gerar reputação,

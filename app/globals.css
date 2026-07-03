@@ -83,56 +83,43 @@
 /* ===== Abelhas decorativas ===== */
 .up-bee {
   display: block;
-  filter: drop-shadow(0 6px 10px hsl(330 50% 8% / 0.35));
+  filter: drop-shadow(0 3px 8px hsl(330 50% 8% / 0.25));
 }
 
-.up-bee__wings {
-  animation: up-bee-flutter var(--flutter, 0.18s) ease-in-out infinite;
-}
-
-@keyframes up-bee-flutter {
-  0%,
-  100% {
-    transform: rotate(0deg) scaleY(1);
-  }
-  50% {
-    transform: rotate(-16deg) scaleY(0.78);
-  }
-}
-
-/* Voo procedural — cada abelha define seus próprios pontos via CSS vars */
+/* Pairar suave — mesmo padrão do loading do up-dashboard (glide curto em loop) */
 .up-bee-floater {
   will-change: transform;
-  animation-name: up-bee-roam;
+  animation-name: up-bee-glide;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
-@keyframes up-bee-roam {
+@keyframes up-bee-glide {
   0%,
   100% {
-    transform: translate(0, 0) rotate(var(--r0, 0deg));
+    transform: translate3d(0, 0, 0) rotate(var(--r0, -4deg));
   }
   25% {
-    transform: translate(var(--x1, 40px), var(--y1, -30px)) rotate(var(--r1, 4deg));
+    transform: translate3d(var(--x1, 16px), var(--y1, -8px), 0) rotate(var(--r1, 4deg));
   }
   50% {
-    transform: translate(var(--x2, -30px), var(--y2, 20px)) rotate(var(--r2, -3deg));
+    transform: translate3d(var(--x2, 30px), var(--y2, 6px), 0) rotate(var(--r2, -2deg));
   }
   75% {
-    transform: translate(var(--x3, 20px), var(--y3, 40px)) rotate(var(--r3, 5deg));
+    transform: translate3d(var(--x3, 12px), var(--y3, 12px), 0) rotate(var(--r3, 5deg));
   }
 }
 
-/* Textura de favo de mel — sutil, reforça o tema de colmeia */
+/* Textura de favo de mel — quase imperceptível, só um brilho no topo da página */
 .up-honeycomb {
-  background-image: url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23F2B23E' stroke-opacity='0.07' stroke-width='1.2'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5z'/%3E%3Cpath d='M0 15l12.98-7.5V0M0 33.5L12.98 41v8M15 0v7.5L28 15M15 49v-8l13-7.5'/%3E%3C/g%3E%3C/svg%3E");
-  background-size: 56px 98px;
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23F2B23E' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5z'/%3E%3Cpath d='M0 15l12.98-7.5V0M0 33.5L12.98 41v8M15 0v7.5L28 15M15 49v-8l13-7.5'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 84px 147px;
   background-attachment: fixed;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 55%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 55%);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .up-bee__wings,
   .up-bee-floater {
     animation: none !important;
   }
