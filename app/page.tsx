@@ -182,16 +182,7 @@ export default function LandingPage() {
         sideOffset={8}
         avoidCollisions
       >
-        <DropdownMenuItem
-          onSelect={(e) => handleSignup(e, 'loveDecoration')}
-          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
-        >
-          <Heart className="mr-3 h-4 w-4 text-pink-500" />
-          <div className="layout-safe flex min-w-0 flex-col">
-            <span className="text-safe font-medium">Eu amo decoração</span>
-            <span className="text-safe text-xs text-muted-foreground">Para entusiastas</span>
-          </div>
-        </DropdownMenuItem>
+      
         <DropdownMenuItem
           onSelect={(e) => handleSignup(e, 'professional')}
           className="cursor-pointer px-4 py-3 hover:bg-primary/10"
@@ -220,6 +211,16 @@ export default function LandingPage() {
           <div className="layout-safe flex min-w-0 flex-col">
             <span className="text-safe font-medium">Wellness</span>
             <span className="text-safe text-xs text-muted-foreground">Bem-estar e saúde</span>
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={(e) => handleSignup(e, 'loveDecoration')}
+          className="cursor-pointer px-4 py-3 hover:bg-primary/10"
+        >
+          <Heart className="mr-3 h-4 w-4 text-pink-500" />
+          <div className="layout-safe flex min-w-0 flex-col">
+            <span className="text-safe font-medium">Eu amo decoração</span>
+            <span className="text-safe text-xs text-muted-foreground">Para entusiastas</span>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
